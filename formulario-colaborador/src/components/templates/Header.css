@@ -1,0 +1,17 @@
+.header {
+  background-color: #000102;
+  color: white;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  text-align: center;
+}
+
+.btn-return{
+    border-radius: 3.6rem;
+    border-color: none;
+    display: flex;
+    align-items: center;
+    padding: 0.2rem;
+}

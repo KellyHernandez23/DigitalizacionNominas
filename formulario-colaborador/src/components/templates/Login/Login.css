@@ -1,0 +1,18 @@
+.bg {
+    background-color: rgb(68, 68, 68);
+    min-height: 100vh;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    
+}
+
+.card{
+    background-color: rgb(227, 227, 227);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 1.5rem;
+    height: 22rem;;
+}
+
