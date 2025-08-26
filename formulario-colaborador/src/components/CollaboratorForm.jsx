@@ -29,7 +29,7 @@ function CollaboratorForm() {
     <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
         Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
     <Card className='size' 
-    style={{padding: '2.5rem', borderRadius:'0.5rem 3rem 0.5rem 3rem'}}
+    style={{padding: '2.5rem', borderRadius:'2rem'}}
     >
       <h4>Formulario de Registro</h4>
       <div>
@@ -95,22 +95,6 @@ function CollaboratorForm() {
       <button onClick={saveSignature}>Guardar Firma</button><br />
       {signature && <img src={signature} alt="Firma" width={160} />}
 
-      {/* Datos del reclutador */}
-      <h3>Datos del Reclutador</h3>
-      <input type="text" placeholder="Nombre del reclutador" /><br />
-      <input type="email" placeholder="Correo del reclutador" /><br />
-      <input type="text" placeholder="Área del reclutador" /><br />
-
-      {/* Aprobaciones */}
-      <h3>Aprobaciones</h3>
-      <input type="text" placeholder="Aprobación Área 1" /><br />
-      <input type="text" placeholder="Aprobación Área 2" /><br />
-      <input type="text" placeholder="Aprobación Área 3" /><br />
-
-      {/* Notificación */}
-      <h3>Notificación</h3>
-      <input type="email" placeholder="Correo para notificación" /><br />
-      <button onClick={() => alert('Correo de notificación enviado (simulado)')}>Enviar Notificación</button>
     </div>
   );
 }
