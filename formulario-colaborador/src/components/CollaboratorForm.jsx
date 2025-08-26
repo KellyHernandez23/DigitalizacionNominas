@@ -2,11 +2,10 @@
 import React, { useState, useRef } from 'react';
 import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
-import { FormControl } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import NativeSelect from '@mui/material/NativeSelect';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { FormControl, TextField, InputLabel, Select, MenuItem, 
+  Card, CardContent, Typography, CardActions, 
+  Button} from '@mui/material';
+import './templates/CollaboratorForm.css';
 
 function CollaboratorForm() {
   const [photo, setPhoto] = useState(null);
@@ -25,38 +24,65 @@ function CollaboratorForm() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className='font' style={{ padding: '20px' }}>
     <h2>Bienvenido</h2> 
-    <h3>Formulario de Registro de Colaborador</h3>
-
-      {/* Datos personales */}
-      <h4>Datos del Colaborador</h4>
-      <TextField id="outlined-basic" label="Nombre completo" variant="outlined" />
-      <TextField label="Fecha de nacimiento" type="date" InputLabelProps={{ shrink: true }} />
-      <FormControl fullWidth>
-        <InputLabel id="demo-multiple-name-label">Sexo</InputLabel>
-        <NativeSelect
+    <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
+        Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
+    <Card className='size' 
+    style={{padding: '2.5rem', borderRadius:'0.5rem 3rem 0.5rem 3rem'}}
+    >
+      <h4>Formulario de Registro</h4>
+      <div>
+        <TextField id="Nombre" className='textfield' label="Nombre(s)" variant="standard" size="small"/>
+        <TextField id="ApellidoPaterno" className='textfield' label="Apellido Paterno" variant="standard" size="small"/>
+        <TextField id="ApellidoMaterno" className='textfield' label="Apellido Materno" variant="standard" size="small"/>
+      </div>
+      <div>
+        <TextField id="FechaNacimiento" className='textfield' label="Fecha de nacimiento" variant='standard' type="date" InputLabelProps={{ shrink: true }} size='small' />
+         <FormControl style={{width: '23rem', height: '35px', paddingTop:'0px', }} variant="standard" size='small' >
+           <InputLabel style={{width: '23rem', height: '35px', paddingBottom:'0px', }} id="select-sexo" size='small'>Sexo</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              //value={sexo}
+              label="Sexo"
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value={10}>Hombre</MenuItem>
+              <MenuItem value={20}>Mujer</MenuItem>
+              <MenuItem value={30}>Otro</MenuItem>
+            </Select>
+          </FormControl>
+      <TextField id="standard-basic" className='textfield' label="Estado de nacimiento" variant="standard" size='small' />
+      </div>
+      <div >
+        <TextField id="standard-basic" className='textfield-rfc' label="CURP" variant="standard" size='small' />
+        <div>
+        <Button 
+          onClick={() => window.open('https://www.gob.mx/curp/')} 
+          variant="contained"
+          size="small"
+          color='inherit'
+        >Consultar CURP</Button>
+        </div>
         
-          defaultValue={30}
-          inputProps={{
-            name: 'sexo',
-            id: 'uncontrolled-native'
-          }}
-          input={<OutlinedInput label="Sexo" />}
-        >
-          <option value={10}>Hombre</option>
-          <option value={20}>Mujer</option>
-          <option value={30}>Otro</option>
-        </NativeSelect>
-      </FormControl>
-      <TextField id="outlined-basic" label="Estado de nacimiento" variant="outlined" />
-      <button onClick={() => window.open('https://www.gob.mx/curp/')}>Consultar CURP</button><br />
-      <TextField id="outlined-basic" label="CURP" variant="outlined" />
+      </div>
+      <div>
+        <TextField id="standard-basic" className='textfield-rfc' label="RFC" variant="standard"/>
+        <div>
+          <Button 
+          onClick={() => window.open('https://wwwmat.sat.gob.mx/aplicacion/31274/consulta-tu-clave-de-rfc-mediante-curp')} 
+          variant="contained"
+          size="small"
+          color='inherit'
+          >Consultar RFC</Button>
+        </div>
+      </div>
 
-      {/* Consulta de RFC */}
-      <button onClick={() => window.open('https://wwwmat.sat.gob.mx/aplicacion/31274/consulta-tu-clave-de-rfc-mediante-curp')}>Consultar RFC</button><br />
-      <TextField id="outlined-basic" label="RFC" variant="outlined" /><br />
-
+    </Card>
+      
       {/* Captura de fotografía */}
       <h3>Fotografía</h3>
       <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" width={320} height={240} />

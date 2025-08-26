@@ -8,9 +8,9 @@ import { useNavigate } from 'react-router-dom';
 
 function Header({ username }) {
   const navigate = useNavigate(); 
-  // if (navigate('/')){
-  //   <header style={{display: 'none'}}></header>
-  // }
+  if (navigate('/')){
+    
+  }
   return (
       <header className="header">
        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
