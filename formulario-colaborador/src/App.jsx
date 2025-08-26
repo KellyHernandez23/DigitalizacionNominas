@@ -1,29 +1,38 @@
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import CollaboratorForm from './components/CollaboratorForm';
-import './App.css';
-import { Menu } from '@mui/material';
+import Login from './components/templates/Login/Login.jsx';
 import Header from './components/templates/Header.jsx';
 import Footer from './components/templates/Footer.jsx';
-import React, {useState} from 'react';
-import Login from './components/templates/Login/Login.jsx';
+import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
-  if(!user) {
-    return <Login onLogin={setUser} />;
-  }
+  const location = useLocation();
+
   return (
-    <div>
-      <div className="App">
-      <Header username={user}/>
+    <div className="App">
+      {location.pathname !== '/' && <Header username={user} />}
       <main className="main-content">
-        <section className="section">
-          <CollaboratorForm />
-        </section>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              !user ? <Login onLogin={setUser} /> : <CollaboratorForm />
+            }
+          />
+          <Route path="/collaborator-form" element={<CollaboratorForm />} />
+        </Routes>
       </main>
       <Footer />
     </div>
-    </div>
-  )
+  );
 }
 
-export default App;
+export default function AppWithRouter() {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+}

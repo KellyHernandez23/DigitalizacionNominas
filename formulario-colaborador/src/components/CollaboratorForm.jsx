@@ -2,6 +2,11 @@
 import React, { useState, useRef } from 'react';
 import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
+import { FormControl } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import NativeSelect from '@mui/material/NativeSelect';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 function CollaboratorForm() {
   const [photo, setPhoto] = useState(null);
@@ -21,24 +26,36 @@ function CollaboratorForm() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Formulario de Registro de Colaborador</h2>
+    <h2>Bienvenido</h2> 
+    <h3>Formulario de Registro de Colaborador</h3>
 
       {/* Datos personales */}
-      <h3>Datos del Colaborador</h3>
-      <input type="text" placeholder="Nombre completo" /><br />
-      <input type="date" placeholder="Fecha de nacimiento" /><br />
-      <select>
-        <option value="">Sexo</option>
-        <option value="H">Hombre</option>
-        <option value="M">Mujer</option>
-      </select><br />
-      <input type="text" placeholder="Estado de nacimiento" /><br />
+      <h4>Datos del Colaborador</h4>
+      <TextField id="outlined-basic" label="Nombre completo" variant="outlined" />
+      <TextField label="Fecha de nacimiento" type="date" InputLabelProps={{ shrink: true }} />
+      <FormControl fullWidth>
+        <InputLabel id="demo-multiple-name-label">Sexo</InputLabel>
+        <NativeSelect
+        
+          defaultValue={30}
+          inputProps={{
+            name: 'sexo',
+            id: 'uncontrolled-native'
+          }}
+          input={<OutlinedInput label="Sexo" />}
+        >
+          <option value={10}>Hombre</option>
+          <option value={20}>Mujer</option>
+          <option value={30}>Otro</option>
+        </NativeSelect>
+      </FormControl>
+      <TextField id="outlined-basic" label="Estado de nacimiento" variant="outlined" />
       <button onClick={() => window.open('https://www.gob.mx/curp/')}>Consultar CURP</button><br />
-      <input type="text" placeholder="CURP" /><br />
+      <TextField id="outlined-basic" label="CURP" variant="outlined" />
 
       {/* Consulta de RFC */}
       <button onClick={() => window.open('https://wwwmat.sat.gob.mx/aplicacion/31274/consulta-tu-clave-de-rfc-mediante-curp')}>Consultar RFC</button><br />
-      <input type="text" placeholder="RFC" /><br />
+      <TextField id="outlined-basic" label="RFC" variant="outlined" /><br />
 
       {/* Captura de fotografía */}
       <h3>Fotografía</h3>

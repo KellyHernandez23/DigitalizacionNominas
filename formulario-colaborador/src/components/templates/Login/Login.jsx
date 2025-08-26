@@ -10,6 +10,8 @@ import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
+import LogoAlze from '../../../assets/img/logo_alze.png';
+import { useNavigate } from 'react-router-dom'; 
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -42,6 +44,7 @@ const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate(); 
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,14 +71,19 @@ const Login = ({ onLogin }) => {
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
-            borderRadius: 'sm',
+            borderRadius: '5px 65px 5px 65px',
             boxShadow: 'md',
             alignItems: 'center',
           }}
           variant="outlined"
         >
           <Typography level="h4" component="h1">
-            <b>Iniciar sesión</b>
+            <div>
+              <img src={LogoAlze} alt="Logo Alze" style={{ height: '9rem', marginRight: '0.5rem' }} />
+            </div>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+              <h3>Iniciar sesión</h3>
+            </div>
           </Typography>
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <FormControl sx={{ mb: 2 }}>
@@ -110,7 +118,14 @@ const Login = ({ onLogin }) => {
             </Button>
           </form>
           <Typography
-            endDecorator={<Link href="#">¿Olvidaste tu contraseña?</Link>}
+            endDecorator={
+            <Link href="/collaborator-form"
+                  onClick={e => {
+                    e.preventDefault();
+                    navigate('/collaborator-form');
+                    }}>Entra como invitado
+            </Link>
+            }
             sx={{ fontSize: 'sm', alignSelf: 'center', mt: 1 }}
           >
             ¿No tienes cuenta?
