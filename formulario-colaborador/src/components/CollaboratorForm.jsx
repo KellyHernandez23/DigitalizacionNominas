@@ -9,6 +9,7 @@ import './templates/CollaboratorForm.css';
 import { LabelOffRounded } from '@mui/icons-material';
 
 function CollaboratorForm() {
+  //#region 
   const [photo, setPhoto] = useState(null);
   const [signature, setSignature] = useState(null);
   const webcamRef = useRef(null);
@@ -16,6 +17,10 @@ function CollaboratorForm() {
   const [nombre, setNombre] = useState('');
   const [apellidoPaterno, setApellidoPaterno] = useState('');
   const [apellidoMaterno, setApellidoMaterno] = useState('');
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [telefonoCasa, setTelefonoCasa] = useState('');
+  const [telefonoCelular, setTelefonoCelular] = useState('');
   const [estado, setEstado] = useState('');
   const [curp, setCurp] = useState('');
   const [rfc, setRfc] = useState('');
@@ -29,6 +34,20 @@ function CollaboratorForm() {
   const [telefonoContactoEmergenciaO, setTelefonoContactoEmergenciaO] = useState('');
   const [tieneHijos, setTieneHijos] = useState('');
   const [cantidadHijos, setCantidadHijos] = useState('');
+  const [infonavit, setInfonavit] = React.useState('');
+  const [fonacot, setFonacot] = useState('');
+  const [pension, setPension] = useState('');
+//#endregion
+  //#region 
+  const handleChangeInfonavit = (event) => {
+    setInfonavit(event.target.value);
+  };
+  const handleChangeFonacot = (event) => {
+    setFonacot(event.target.value);
+  };
+  const handleChangePension = (event) => {
+    setPension(event.target.value);
+  };
 
   const handleRadioChange = (event) => {
     setTieneHijos(event.target.value);
@@ -79,6 +98,20 @@ function CollaboratorForm() {
   );
   setter(value);
 };
+
+const handleEmailChange = (event) => {
+  const emailValue = event.target.value.toLowerCase();
+  setEmail(emailValue);
+  
+  // Validación opcional en tiempo real
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (emailValue && !emailPattern.test(emailValue)) {
+    setEmailError('Formato de email inválido');
+  } else {
+    setEmailError('');
+  }
+}
+//#endregion
 
   return (
     <div className='font' style={{ padding: '20px', width: '100%' }}>
@@ -240,24 +273,30 @@ function CollaboratorForm() {
               <MenuItem value={50}>Posgrado</MenuItem>
             </Select>
           </FormControl>
-        <TextField 
+         <TextField 
+          placeholder='ejemplo@dominio.com'
           id="Email" 
           className='textfield' 
           label="Email" 
           variant="standard" 
           size="small"
-          // onChange={handleTextOnly(setEmail, 35)}
-          // inputProps={{maxLength:35}}
-          required={true}/>
+          value={email}
+          onChange={handleEmailChange}
+          error={!!emailError}
+          helperText={emailError}
+          inputProps={{maxLength:35}}
+          required={true}
+        />
         <TextField 
           id="TelefonoCasa" 
           className='textfield' 
           label="Teléfono Casa" 
           variant="standard" 
           size="small"
-          // value={telefonoCasa}
-          // onChange={handleTextOnly(setTelefonoCasa, 10)}
-          // inputProps={{maxLength:10}}
+          type='number'
+          value={telefonoCasa}
+          onChange={handleNumberOnly(setTelefonoCasa, 10)}
+          inputProps={{maxLength:10}}
           required={false}/>
         <TextField 
           id="TelefonoMovil" 
@@ -265,9 +304,9 @@ function CollaboratorForm() {
           label="Teléfono Móvil" 
           variant="standard" 
           size="small"
-          type='email'
-          // value={telefonoMovil}
-          // onChange={handleTextOnly(setTelefonoMovil, 10)}
+          type='number'
+          value={telefonoCelular}
+          onChange={handleNumberOnly(setTelefonoCelular, 10)}
           inputProps={{maxLength:10}}
           required={true}/>
       </div>
@@ -355,6 +394,7 @@ function CollaboratorForm() {
       </div>
 
       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
+//#region  Contacto emergencia
       <h4>Contactos de emergencia</h4>
       <div>
         <TextField
@@ -418,7 +458,9 @@ function CollaboratorForm() {
           required={false}
         />
       </div>
+//#endregion
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
+//#region Datos médicos
       <h4>Datos médicos</h4>
       <div>
         <TextField
@@ -440,7 +482,9 @@ function CollaboratorForm() {
           required={false}
         />
       </div>
+//#endregion
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
+//#region Información adicional
        <h4>Información adicional</h4>
        <div>
         <TextField
@@ -462,7 +506,7 @@ function CollaboratorForm() {
           required={true}
         />
         <div style={{display:'flex', alignItems:'center'}}>
-          <label className='label'>¿Tiene hijos?</label>
+          <label className='label'>¿Tiene hijos? *</label>
         </div>
      <FormControl style={{paddingTop:0}}> 
      
@@ -472,6 +516,7 @@ function CollaboratorForm() {
         name="row-radio-buttons-group"
         value={tieneHijos}
         onChange={handleRadioChange}
+        required={true}
       >
         <FormControlLabel value="Sí" control={<Radio />} label="Sí" />
         <FormControlLabel value="No" control={<Radio />} label="No" />
@@ -487,6 +532,7 @@ function CollaboratorForm() {
           className='textfield-hijos'
           value={cantidadHijos}
           onChange={(e) => handleHijosInput(e.target.value)}
+          required={true}
           inputProps={{ 
             min: 1,
             max: 99,
@@ -495,27 +541,45 @@ function CollaboratorForm() {
         />
       )}
        </div>
+//#endregion
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
+//#region Adeudos
         <h4>Adeudos</h4>
-       <div>
-        <FormControl>
-      <FormLabel id="Infonavit">Infonavit</FormLabel>
+       <div style={{display:'flex', justifyContent:'space-between'}}>
+        <FormControl >
+      <FormLabel id="demo-controlled-radio-buttons-group">Infonavit *</FormLabel>
       <RadioGroup
-        row
-        aria-labelledby="Infonavit"
-        name="row-radio-buttons-group"
+        aria-labelledby="demo-controlled-radio-buttons-group"
+        name="controlled-radio-buttons-group"
+        value={infonavit}
+        onChange={handleChangeInfonavit}
+        required={true}
       >
         <FormControlLabel value="Sí" control={<Radio />} label="Sí" />
         <FormControlLabel value="No" control={<Radio />} label="No" />
       </RadioGroup>
     </FormControl>
-
-<FormControl>
-      <FormLabel id="Infonavit">Fonacot</FormLabel>
+    <FormControl>
+      <FormLabel id="demo-controlled-radio-buttons-group">Fonacot *</FormLabel>
       <RadioGroup
-        row
-        aria-labelledby="Infonavit"
-        name="row-radio-buttons-group"
+        aria-labelledby="demo-controlled-radio-buttons-group"
+        name="controlled-radio-buttons-group"
+        value={fonacot}
+        onChange={handleChangeFonacot}
+        required={true}
+      >
+        <FormControlLabel value="Sí" control={<Radio />} label="Sí" />
+        <FormControlLabel value="No" control={<Radio />} label="No" />
+      </RadioGroup>
+    </FormControl>
+    <FormControl>
+      <FormLabel id="demo-controlled-radio-buttons-group">Pensión Alimenticia *</FormLabel>
+      <RadioGroup
+        aria-labelledby="demo-controlled-radio-buttons-group"
+        name="controlled-radio-buttons-group"
+        value={pension}
+        onChange={handleChangePension}
+        required={true}
       >
         <FormControlLabel value="Sí" control={<Radio />} label="Sí" />
         <FormControlLabel value="No" control={<Radio />} label="No" />
@@ -523,6 +587,7 @@ function CollaboratorForm() {
     </FormControl>
 
        </div>
+//#endregion
     </Card>
       
       {/* Captura de fotografía */}
