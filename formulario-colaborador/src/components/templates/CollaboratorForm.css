@@ -16,12 +16,12 @@
 }
 
 .textfield {
-    width: 30%;
+    width: 33%;
     padding-top: 0px !important;
 }
 
 .textfield-rfc{
-    width: 85%;
+    width: 87%;
     height: 40px;
     padding-top: 0px !important;
 }
@@ -43,4 +43,23 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
 }
 
 label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
-    margin-top: 0px !important;}
+    margin-top: 0px !important;
+}
+
+.label{
+    color:#00000099;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4375em;
+    letter-spacing: 0.00938em;
+    padding: 0;
+}
+
+.textfield-padres{
+    width: 32%;
+}
+
+.textfield-hijos{
+    width: 10%;
+}
