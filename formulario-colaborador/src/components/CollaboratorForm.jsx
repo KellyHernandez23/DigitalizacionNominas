@@ -184,6 +184,43 @@ const handleEmailChange = (event) => {
         required={true}
       />
       </div>
+      <div>
+         <FormControl style={{width: '50%', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
+           <InputLabel style={{width: '50%', height: '35px', paddingBottom:'0px', }} id="select-escolaridad" size='small'>Escolaridad</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              label="Escolaridad"
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value={10}>Primaria</MenuItem>
+              <MenuItem value={20}>Secundaria</MenuItem>
+              <MenuItem value={30}>Preparatoria</MenuItem>
+              <MenuItem value={40}>Licenciatura</MenuItem>
+              <MenuItem value={50}>Posgrado</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl style={{width: '50%', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
+           <InputLabel style={{width: '50%', height: '35px', paddingBottom:'0px', }} id="select-escolaridad" size='small'>Estado Civil</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              label="Estado Civil"
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value={10}>Soltero(a)</MenuItem>
+              <MenuItem value={20}>Casado(a)</MenuItem>
+              <MenuItem value={30}>Viudo(a)</MenuItem>
+              <MenuItem value={40}>Divorciado(a)</MenuItem>
+              <MenuItem value={50}>Unión Libre</MenuItem>
+            </Select>
+          </FormControl>
+
+      </div>
       <div >
         <TextField 
           id="standard-basic" 
@@ -256,23 +293,6 @@ const handleEmailChange = (event) => {
           required={true}/>
       </div>
       <div>
-         <FormControl style={{width: '23rem', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
-           <InputLabel style={{width: '23rem', height: '35px', paddingBottom:'0px', }} id="select-escolaridad" size='small'>Escolaridad</InputLabel>
-            <Select 
-              id="demo-simple-select-standard"
-              label="Escolaridad"
-              style={{paddingTop:'0px !important'}}
-            >
-              <MenuItem value="">
-                <em>Seleccione</em>
-              </MenuItem>
-              <MenuItem value={10}>Primaria</MenuItem>
-              <MenuItem value={20}>Secundaria</MenuItem>
-              <MenuItem value={30}>Preparatoria</MenuItem>
-              <MenuItem value={40}>Licenciatura</MenuItem>
-              <MenuItem value={50}>Posgrado</MenuItem>
-            </Select>
-          </FormControl>
          <TextField 
           placeholder='ejemplo@dominio.com'
           id="Email" 
@@ -392,9 +412,7 @@ const handleEmailChange = (event) => {
           inputProps={{maxLength:20}}
           required={true}/>
       </div>
-
       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
-//#region  Contacto emergencia
       <h4>Contactos de emergencia</h4>
       <div>
         <TextField
@@ -458,9 +476,9 @@ const handleEmailChange = (event) => {
           required={false}
         />
       </div>
-//#endregion
+
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
-//#region Datos médicos
+
       <h4>Datos médicos</h4>
       <div>
         <TextField
@@ -482,9 +500,7 @@ const handleEmailChange = (event) => {
           required={false}
         />
       </div>
-//#endregion
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
-//#region Información adicional
        <h4>Información adicional</h4>
        <div>
         <TextField
@@ -541,9 +557,9 @@ const handleEmailChange = (event) => {
         />
       )}
        </div>
-//#endregion
+
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
-//#region Adeudos
+
         <h4>Adeudos</h4>
        <div style={{display:'flex', justifyContent:'space-between'}}>
         <FormControl >
@@ -587,7 +603,7 @@ const handleEmailChange = (event) => {
     </FormControl>
 
        </div>
-//#endregion
+
     </Card>
       
       {/* Captura de fotografía */}
