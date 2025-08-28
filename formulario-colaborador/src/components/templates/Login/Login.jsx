@@ -113,7 +113,7 @@ const Login = ({ onLogin }) => {
                 {error}
               </Typography>
             )}
-            <Button type="submit" variant="solid" fullWidth>
+            <Button type="submit" variant="solid" fullWidth >
               Entrar
             </Button>
           </form>

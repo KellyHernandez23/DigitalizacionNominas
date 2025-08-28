@@ -21,7 +21,7 @@ function CollaboratorForm() {
   const [emailError, setEmailError] = useState('');
   const [telefonoCasa, setTelefonoCasa] = useState('');
   const [telefonoCelular, setTelefonoCelular] = useState('');
-  const [estado, setEstado] = useState('');
+  const [estadoNacimiento, setEstadoNacimiento] = useState('');
   const [curp, setCurp] = useState('');
   const [rfc, setRfc] = useState('');
   const [umf, setUmf] = useState('');
@@ -37,6 +37,16 @@ function CollaboratorForm() {
   const [infonavit, setInfonavit] = React.useState('');
   const [fonacot, setFonacot] = useState('');
   const [pension, setPension] = useState('');
+  const [nombreMadre, setNombreMadre] = useState('');
+  const [nombrePadre, setNombrePadre] = useState('');
+  const [nombreEmergencia, setNombreEmergencia] = useState('');
+  const [nombreEmergenciaO, setNombreEmergenciaO] = useState('');
+  const [tipoSangre, setTipoSangre] = useState('');
+  const [calle, setCalle] = useState('');
+  const [colonia, setColonia] = useState('');
+  const [localidad, setLocalidad] = useState('');
+  const [municipio, setMunicipio] = useState('');
+  const [estado, setEstado] = useState('');
 //#endregion
   //#region 
   const handleChangeInfonavit = (event) => {
@@ -79,12 +89,25 @@ function CollaboratorForm() {
   const handleRfcUpper = (event) => {
     setRfc(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
   }
+
   const handleNumberOnly = (setter, max) => (event) => {
     setter(event.target.value.toUpperCase().replace(/[^0-9]/g, '').slice(0, max));
   }
 
+  const handleNumber = (setter, max) => (event) => {
+    setter(event.target.value.toUpperCase().replace(/[^aeiouAEIOU0-9]/g, '').slice(0, max));
+  }
+
   const handleTextOnly = (setter, max) => e => {
   let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ\s]/g, '').slice(0, max);
+  value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
+    (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
+  );
+  setter(value);
+};
+
+const handleTextCapitalize = (setter, max) => e => {
+  let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
   value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
     (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
   );
@@ -96,6 +119,12 @@ function CollaboratorForm() {
   value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ0-9])([a-zA-ZáéíóúÁÉÍÓÚ0-9]*)/g, 
     (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
   );
+  setter(value);
+};
+
+const handleTextUpper = (setter, max) => e => {
+  let value = e.target.value.replace(/[^a-zA-Z+\s]/g, '').slice(0, max);
+  value = value.toUpperCase();
   setter(value);
 };
 
@@ -178,8 +207,8 @@ const handleEmailChange = (event) => {
         label="Estado de nacimiento" 
         variant="standard" 
         size='small' 
-        value={estado}
-        onChange={handleTextOnly(setEstado, 30)}
+        value={estadoNacimiento}
+        onChange={handleTextOnly(setEstadoNacimiento, 30)}
         inputProps={{ maxLength: 30 }}
         required={true}
       />
@@ -270,6 +299,7 @@ const handleEmailChange = (event) => {
           label="NSS" 
           variant="standard"
           value={nss}
+          type='number'
           onChange={handleNumberOnly(setNss, 11)}
           inputProps={{ maxLength: 11 }}
           required={true}/>
@@ -340,6 +370,8 @@ const handleEmailChange = (event) => {
           label="Calle"
           variant="standard"
           size="small"
+          value={calle}
+          onChange={handleTextCapitalize(setCalle, 50)}
           inputProps={{maxLength:20}}
           required={true}
         />
@@ -349,6 +381,8 @@ const handleEmailChange = (event) => {
           label="Colonia"
           variant="standard"
           size="small"
+          value={colonia}
+          onChange={handleTextCapitalize(setColonia, 50)}
           inputProps={{maxLength:20}}
           required={true}
         />
@@ -359,8 +393,8 @@ const handleEmailChange = (event) => {
           variant="standard"
           size="small"
           value={noExterior}
-          onChange={handleNumberOnly(setNoExterior, 5)}
-          inputProps={{maxLength:20}}
+          onChange={handleNumber(setNoExterior, 5)}
+          inputProps={{maxLength:5}}
           required={true}
         />
          <TextField
@@ -370,8 +404,8 @@ const handleEmailChange = (event) => {
           variant="standard"
           size="small"
           value={noInterior}
-          onChange={handleNumberOnly(setNoInterior, 5)}
-          inputProps={{maxLength:20}}
+          onChange={handleNumber(setNoInterior, 5)}
+          inputProps={{maxLength:5}}
           required={false}
         />
         </div>
@@ -383,6 +417,7 @@ const handleEmailChange = (event) => {
           variant="standard"
           size="small"
           value={cp}
+          type='number'
           onChange={handleNumberOnly(setCp, 5)}
           inputProps={{maxLength:5}}
           required={true}
@@ -393,7 +428,9 @@ const handleEmailChange = (event) => {
           label="Localidad"
           variant="standard"
           size="small"
-          inputProps={{maxLength:20}}
+          value={localidad}
+          onChange={handleTextCapitalize(setLocalidad, 40)}
+          inputProps={{maxLength:40}}
           required={true}/>
           <TextField
           id="Municipio"
@@ -401,7 +438,9 @@ const handleEmailChange = (event) => {
           label="Municipio"
           variant="standard"
           size="small"
-          inputProps={{maxLength:20}}
+          value={municipio}
+          onChange={handleTextCapitalize(setMunicipio, 30)}
+          inputProps={{maxLength:30}}
           required={true}/>
           <TextField
           id="Estado"
@@ -409,7 +448,9 @@ const handleEmailChange = (event) => {
           label="Estado"
           variant="standard"
           size="small"
-          inputProps={{maxLength:20}}
+          value={estado}
+          onChange={handleTextOnly(setEstado, 30)}
+          inputProps={{maxLength:30}}
           required={true}/>
       </div>
       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
@@ -421,24 +462,35 @@ const handleEmailChange = (event) => {
           label="Nombre"
           variant="standard"
           size="small"
+          value={nombreEmergencia}
+          onChange={handleTextOnly(setNombreEmergencia, 100)}
           inputProps={{maxLength:100}}
           required={true}
         />
-        <TextField
-          id="ParentescoContactoEmergencia"
-          className='textfield'
-          label="Parentesco"
-          variant="standard"
-          size="small"
-          inputProps={{maxLength:50}}
-          required={true}
-        />
+         <FormControl style={{width: '50%', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
+           <InputLabel style={{width: '50%', height: '35px', paddingBottom:'0px', }} id="select-parentesco" size='small'>Parentesco</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              label="Parentesco"
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value={10}>Padre</MenuItem>
+              <MenuItem value={20}>Madre</MenuItem>
+              <MenuItem value={30}>Esposo(a)</MenuItem>
+              <MenuItem value={40}>Hijo(a)</MenuItem>
+              <MenuItem value={50}>Hermano(a)</MenuItem>
+            </Select>
+          </FormControl>
         <TextField
           id="TelefonoContactoEmergencia"
           className='textfield'
           label="Teléfono"
           variant="standard"
           size="small"
+          type='number'
           value={telefonoContactoEmergencia}
           onChange={handleNumberOnly(setTelefonoContactoEmergencia, 10)}
           inputProps={{maxLength:10}}
@@ -447,16 +499,18 @@ const handleEmailChange = (event) => {
       </div>
       <div>
         <TextField
-          id="NombreContactoEmergencia"
+          id="NombreContactoEmergenciaO"
           className='textfield'
           label="Nombre"
           variant="standard"
           size="small"
+          value={nombreEmergenciaO}
+          onChange={handleTextOnly(setNombreEmergenciaO, 100)}
           inputProps={{maxLength:100}}
           required={false}
         />
         <TextField
-          id="ParentescoContactoEmergencia"
+          id="ParentescoContactoEmergenciaO"
           className='textfield'
           label="Parentesco"
           variant="standard"
@@ -465,11 +519,12 @@ const handleEmailChange = (event) => {
           required={false}
         />
         <TextField
-          id="TelefonoContactoEmergencia"
+          id="TelefonoContactoEmergenciaO"
           className='textfield'
           label="Teléfono"
           variant="standard"
           size="small"
+          type='number'
           value={telefonoContactoEmergenciaO}
           onChange={handleNumberOnly(setTelefonoContactoEmergenciaO, 10)}
           inputProps={{maxLength:10}}
@@ -487,6 +542,8 @@ const handleEmailChange = (event) => {
           label="Tipo de Sangre"
           variant="standard"
           size="small"
+          value={tipoSangre}
+          onChange={handleTextUpper(setTipoSangre, 3)}
           inputProps={{maxLength:3}}
           required={true}
         />
@@ -509,7 +566,9 @@ const handleEmailChange = (event) => {
           label="Nombre de la Madre"
           variant="standard"
           size="small"
-          inputProps={{maxLength:100}}
+          value={nombreMadre}
+          onChange={handleTextOnly(setNombreMadre, 80)}
+          inputProps={{maxLength:80}}
           required={true}
         />
         <TextField
@@ -518,7 +577,9 @@ const handleEmailChange = (event) => {
           label="Nombre del Padre"
           variant="standard"
           size="small"
-          inputProps={{maxLength:100}}
+          value={nombrePadre}
+          onChange={handleTextOnly(setNombrePadre, 80)}
+          inputProps={{maxLength:80}}
           required={true}
         />
         <div style={{display:'flex', alignItems:'center'}}>
