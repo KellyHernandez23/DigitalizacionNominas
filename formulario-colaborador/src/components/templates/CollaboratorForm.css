@@ -2,11 +2,19 @@
     padding-bottom: 2rem;
 }
 
+.container{
+    padding: '20px';
+    width: '100%';
+}
 .font p {
     color: #979797;
     font-style: oblique;
     font-size: smaller;
     padding-bottom: 1rem;
+}
+.card{
+    padding: 2.5rem;
+    border-radius: 2rem !important;
 }
 
 .size div{
@@ -62,4 +70,46 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
 
 .textfield-hijos{
     width: 10%;
+} 
+
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h4 {
+    font-size: 1rem;
+  }
+  
+  p {
+    font-size: 0.9rem;
+  }
+
+  .textfield {
+    width: 100%;
+  }
+  .size div{
+    display: block;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+  .textfield-rfc{
+    width: 100%;
+  }
+  .card{
+    border-radius: 0px !important;
+  }
+  .container{
+    padding: 0px !important;
+    border-radius: 0px;
+    background-color: transparent !important;
+    outline: solid #f4f4f4;
+  }
+  .css-1j74uew-MuiPaper-root-MuiCard-root{
+    background-color: transparent !important;
+  }
+  .btn-consultar{
+    width: 100% !important;
+  }
 }

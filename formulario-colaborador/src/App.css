@@ -106,3 +106,9 @@
 .read-the-docs {
   color: #888;
 }
+
+@media (max-width: 480px) {
+  .card {
+    padding: 0px;
+  }
+}

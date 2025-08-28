@@ -143,13 +143,11 @@ const handleEmailChange = (event) => {
 //#endregion
 
   return (
-    <div className='font' style={{ padding: '20px', width: '100%' }}>
+    <div className='font container'>
     <h2>Bienvenido</h2> 
     <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
         Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
-    <Card className='size' 
-    style={{padding: '2.5rem', borderRadius:'2rem'}}
-    >
+    <Card className='card size'>
       <h4>Formulario de Registro</h4>
       <div>
         <TextField 
@@ -587,7 +585,7 @@ const handleEmailChange = (event) => {
         </div>
      <FormControl style={{paddingTop:0}}> 
      
-        <RadioGroup
+        <RadioGroup className='radio-group-container'
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
@@ -623,7 +621,7 @@ const handleEmailChange = (event) => {
 
         <h4>Adeudos</h4>
        <div style={{display:'flex', justifyContent:'space-between'}}>
-        <FormControl >
+        <FormControl className='radio-group-container'>
       <FormLabel id="demo-controlled-radio-buttons-group">Infonavit *</FormLabel>
       <RadioGroup
         aria-labelledby="demo-controlled-radio-buttons-group"
