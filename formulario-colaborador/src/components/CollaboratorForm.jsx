@@ -187,7 +187,6 @@ const handleEmailChange = (event) => {
            <InputLabel style={{width: '23rem', height: '35px', paddingBottom:'0px', }} id="select-sexo" size='small'>Sexo</InputLabel>
             <Select 
               id="demo-simple-select-standard"
-              //value={sexo}
               label="Sexo"
               style={{paddingTop:'0px !important'}}
             >
@@ -263,6 +262,7 @@ const handleEmailChange = (event) => {
         <div>
         <Button 
           onClick={() => window.open('https://www.gob.mx/curp/')} 
+          className='btn-consultar'
           variant="contained"
           size="small"
           color='inherit'
@@ -285,6 +285,7 @@ const handleEmailChange = (event) => {
           <Button 
           onClick={() => window.open('https://wwwmat.sat.gob.mx/aplicacion/31274/consulta-tu-clave-de-rfc-mediante-curp')} 
           variant="contained"
+          className='btn-consultar'
           size="small"
           color='inherit'
           >Consultar RFC</Button>
