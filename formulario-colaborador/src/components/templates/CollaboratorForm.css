@@ -3,8 +3,8 @@
 }
 
 .container{
-    padding: '20px';
-    width: '100%';
+    padding: 20px;
+    width: 100%;
 }
 .font p {
     color: #979797;
@@ -25,6 +25,18 @@
 
 .textfield {
     width: 33%;
+    padding-top: 0px !important;
+}
+
+.date{
+    width: 33%;
+    height: 35px;
+    padding-bottom:0px;
+}
+.select-sexo{
+    width: 33%;
+    height: 35px;
+    padding-bottom: 0px !important;
     padding-top: 0px !important;
 }
 
@@ -71,6 +83,22 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
 .textfield-hijos{
     width: 10%;
 } 
+.select{
+    width: 50%;
+    height: 35px;
+    padding-top: 0px;
+}
+
+.MuiFormControl-root.select.css-1iw3t7y-MuiFormControl-root{
+    padding-top: 0px;
+}
+.div-adeudos{
+    display: flex;
+    justify-content: space-between;
+}
+.display{
+    display: contents !important;
+}
 
 
 @media (max-width: 480px) {
@@ -88,11 +116,11 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
 
   .textfield {
     width: 100%;
+    padding-top: 1px;
   }
   .size div{
     display: block;
-    gap: 1rem;
-    padding-top: 1rem;
+    padding-top: 1.5rem;
   }
   .textfield-rfc{
     width: 100%;
@@ -112,4 +140,28 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
   .btn-consultar{
     width: 100% !important;
   }
+  .select{
+    width: 100%;
+    }
+    .select-sexo{
+        width: 100%;
+    }
+
+    .textfield-padres{
+        width: 100%;
+    }
+
+    .textfield-hijos{
+        width: 100%;
+    } 
+    .div-adeudos{
+        display: block;
+        gap: 1.5rem;
+    }
+    .padding-label{
+        padding-top: 1rem;
+    }
+    .display{
+        display: flex !important;
+    }
 }

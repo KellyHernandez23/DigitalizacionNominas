@@ -152,7 +152,7 @@ const handleEmailChange = (event) => {
       <div>
         <TextField 
           id="Nombre" 
-          className='textfield' 
+          className='textfield padding-label' 
           label="Nombre(s)" 
           variant="standard" 
           size="small"
@@ -161,7 +161,7 @@ const handleEmailChange = (event) => {
           inputProps={{maxLength:35}}
           required={true}/>
         <TextField 
-          id="ApellidoPaterno" 
+          id="ApellidoPaterno padding-label" 
           className='textfield' 
           label="Apellido Paterno" 
           variant="standard" 
@@ -183,8 +183,8 @@ const handleEmailChange = (event) => {
       </div>
       <div>
         <TextField id="FechaNacimiento" className='textfield' label="Fecha de nacimiento" variant='standard' type="date" InputLabelProps={{ shrink: true }} size='small' required={true} />
-         <FormControl style={{width: '23rem', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
-           <InputLabel style={{width: '23rem', height: '35px', paddingBottom:'0px', }} id="select-sexo" size='small'>Sexo</InputLabel>
+         <FormControl className='select-sexo' variant="standard" size='small' required={true}>
+           <InputLabel className='' id="select-sexo" size='small'>Sexo</InputLabel>
             <Select 
               id="demo-simple-select-standard"
               label="Sexo"
@@ -198,21 +198,24 @@ const handleEmailChange = (event) => {
               <MenuItem value={30}>Otro</MenuItem>
             </Select>
           </FormControl>
-      <TextField 
-        id="standard-basic" 
-        className='textfield' 
-        label="Estado de nacimiento" 
-        variant="standard" 
-        size='small' 
-        value={estadoNacimiento}
-        onChange={handleTextOnly(setEstadoNacimiento, 30)}
-        inputProps={{ maxLength: 30 }}
-        required={true}
-      />
+          <div className='display'>
+          <TextField 
+            id="standard-basic" 
+            className='textfield' 
+            label="Estado de nacimiento" 
+            variant="standard" 
+            size='small' 
+            value={estadoNacimiento}
+            onChange={handleTextOnly(setEstadoNacimiento, 30)}
+            inputProps={{ maxLength: 30 }}
+            required={true}
+          />
+          </div>
+      
       </div>
       <div>
-         <FormControl style={{width: '50%', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
-           <InputLabel style={{width: '50%', height: '35px', paddingBottom:'0px', }} id="select-escolaridad" size='small'>Escolaridad</InputLabel>
+         <FormControl className='select' variant="standard" size='small' required={true}>
+           <InputLabel className='select' id="select-escolaridad" size='small'>Escolaridad</InputLabel>
             <Select 
               id="demo-simple-select-standard"
               label="Escolaridad"
@@ -228,8 +231,9 @@ const handleEmailChange = (event) => {
               <MenuItem value={50}>Posgrado</MenuItem>
             </Select>
           </FormControl>
-          <FormControl style={{width: '50%', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
-           <InputLabel style={{width: '50%', height: '35px', paddingBottom:'0px', }} id="select-escolaridad" size='small'>Estado Civil</InputLabel>
+          <div className='display'>
+             <FormControl className='select' variant="standard" size='small' required={true}>
+           <InputLabel className='select' id="select-escolaridad" size='small'>Estado Civil</InputLabel>
             <Select 
               id="demo-simple-select-standard"
               label="Estado Civil"
@@ -245,6 +249,8 @@ const handleEmailChange = (event) => {
               <MenuItem value={50}>Unión Libre</MenuItem>
             </Select>
           </FormControl>
+          </div>
+         
 
       </div>
       <div >
@@ -466,8 +472,8 @@ const handleEmailChange = (event) => {
           inputProps={{maxLength:100}}
           required={true}
         />
-         <FormControl style={{width: '50%', height: '35px', paddingTop:'0px', }} variant="standard" size='small' required={true}>
-           <InputLabel style={{width: '50%', height: '35px', paddingBottom:'0px', }} id="select-parentesco" size='small'>Parentesco</InputLabel>
+         <FormControl className='select-sexo' variant="standard" size='small' required={true}>
+           <InputLabel className='select-sexo' id="select-parentesco" size='small'>Parentesco</InputLabel>
             <Select 
               id="demo-simple-select-standard"
               label="Parentesco"
@@ -483,18 +489,21 @@ const handleEmailChange = (event) => {
               <MenuItem value={50}>Hermano(a)</MenuItem>
             </Select>
           </FormControl>
-        <TextField
-          id="TelefonoContactoEmergencia"
-          className='textfield'
-          label="Teléfono"
-          variant="standard"
-          size="small"
-          type='number'
-          value={telefonoContactoEmergencia}
-          onChange={handleNumberOnly(setTelefonoContactoEmergencia, 10)}
-          inputProps={{maxLength:10}}
-          required={true}
-        />
+          <div className='display'>
+          <TextField
+            id="TelefonoContactoEmergencia"
+            className='textfield'
+            label="Teléfono"
+            variant="standard"
+            size="small"
+            type='number'
+            value={telefonoContactoEmergencia}
+            onChange={handleNumberOnly(setTelefonoContactoEmergencia, 10)}
+            inputProps={{maxLength:10}}
+            required={true}
+          />
+          </div>
+        
       </div>
       <div>
         <TextField
@@ -508,16 +517,25 @@ const handleEmailChange = (event) => {
           inputProps={{maxLength:100}}
           required={false}
         />
-        <TextField
-          id="ParentescoContactoEmergenciaO"
-          className='textfield'
-          label="Parentesco"
-          variant="standard"
-          size="small"
-          inputProps={{maxLength:50}}
-          required={false}
-        />
-        <TextField
+        <FormControl className='select-sexo' variant="standard" size='small' required={true}>
+           <InputLabel className='select-sexo' id="select-parentescoO" size='small'>Parentesco</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              label="Parentesco"
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value={10}>Padre</MenuItem>
+              <MenuItem value={20}>Madre</MenuItem>
+              <MenuItem value={30}>Esposo(a)</MenuItem>
+              <MenuItem value={40}>Hijo(a)</MenuItem>
+              <MenuItem value={50}>Hermano(a)</MenuItem>
+            </Select>
+          </FormControl>
+          <div className='display'>
+            <TextField
           id="TelefonoContactoEmergenciaO"
           className='textfield'
           label="Teléfono"
@@ -529,6 +547,8 @@ const handleEmailChange = (event) => {
           inputProps={{maxLength:10}}
           required={false}
         />
+          </div>
+        
       </div>
 
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
@@ -621,8 +641,8 @@ const handleEmailChange = (event) => {
        <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
 
         <h4>Adeudos</h4>
-       <div style={{display:'flex', justifyContent:'space-between'}}>
-        <FormControl className='radio-group-container'>
+       <div className='div-adeudos'>
+      <FormControl className='radio-group-container'>
       <FormLabel id="demo-controlled-radio-buttons-group">Infonavit *</FormLabel>
       <RadioGroup
         aria-labelledby="demo-controlled-radio-buttons-group"
