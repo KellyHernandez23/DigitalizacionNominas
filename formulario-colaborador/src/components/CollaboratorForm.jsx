@@ -322,6 +322,7 @@ const handleEmailChange = (event) => {
           className='textfield' 
           label="No. de Cuenta" 
           variant="standard"
+          type='number'
           value={noCuenta}
           onChange={handleNumberOnly(setNoCuenta, 25)}
           inputProps={{ maxLength: 25 }}
