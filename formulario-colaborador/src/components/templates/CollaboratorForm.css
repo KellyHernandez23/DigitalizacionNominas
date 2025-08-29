@@ -100,6 +100,13 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
     display: contents !important;
 }
 
+.btn-save{
+    display:flex;
+    justify-content:flex-end;
+     padding-top:2rem; 
+     padding-bottom:.5rem;
+}
+
 
 @media (max-width: 480px) {
   h2 {
@@ -164,4 +171,11 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
     .display{
         display: flex !important;
     }
+
+    .btn-save{
+    display:flex;
+    width: 100%;
+     padding-top:2rem; 
+     padding-bottom:.5rem;
+}
 }

@@ -5,6 +5,7 @@ import SignatureCanvas from 'react-signature-canvas';
 import { FormControl, TextField, InputLabel, Select, MenuItem, 
   Card, CardContent, Typography, CardActions, 
   Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel} from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
 import { LabelOffRounded } from '@mui/icons-material';
 
@@ -685,7 +686,12 @@ const handleEmailChange = (event) => {
 
        </div>
 
+       <div className='btn-save'>
+        <Button className='select' variant="contained" endIcon={<SaveIcon />}>Guardar datos</Button>
+       </div>
     </Card>
+
+    
       
       {/* Captura de fotografía */}
       {/* <h3>Fotografía</h3>
