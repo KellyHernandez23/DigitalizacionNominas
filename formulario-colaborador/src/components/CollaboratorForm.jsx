@@ -685,12 +685,10 @@ const handleEmailChange = (event) => {
     </FormControl>
 
        </div>
-
-       <div className='btn-save'>
-        <Button className='select' variant="contained" endIcon={<SaveIcon />}>Guardar datos</Button>
-       </div>
     </Card>
-
+      <div className='btn-save'>
+        <Button variant="contained" endIcon={<SaveIcon />}>Guardar datos</Button>
+       </div>
     
       
       {/* Captura de fotografía */}

@@ -178,4 +178,7 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
      padding-top:2rem; 
      padding-bottom:.5rem;
 }
+    .btn-save Button{
+        width: 100% !important;
+    }
 }
