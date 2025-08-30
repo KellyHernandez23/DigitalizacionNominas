@@ -24,6 +24,8 @@ function ModeToggle() {
     return <Button variant="soft">Change mode</Button>;
   }
 
+   
+
   return (
     <Select
       variant="soft"
@@ -46,17 +48,52 @@ const Login = ({ onLogin }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate(); 
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (username === 'admin' && password === '1234') {
+  //     setError('');
+  //     if (onLogin) onLogin(username);
+  //   } else {
+  //     setError('Usuario o contraseña incorrectos');
+  //   }
+  // };
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (username === 'admin' && password === '1234') {
-      setError('');
-      if (onLogin) onLogin(username);
-    } else {
-      setError('Usuario o contraseña incorrectos');
-    }
+    //setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setError('');
+        if (onLogin) onLogin(data.user);
+          navigate('/collaborator-form');
+          console.log('Usuario autenticado:', data.user);
+      } else {
+        setError(data.error || 'Usuario o contraseña incorrectos');
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      setError('Error de conexión con el servidor');
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
-  return (
+
+return (
     <main>
       <CssVarsProvider>
         <ModeToggle />
@@ -95,6 +132,7 @@ const Login = ({ onLogin }) => {
                 onChange={e => setUsername(e.target.value)}
                 placeholder="Usuario"
                 required
+                // disabled={loading}
               />
             </FormControl>
             <FormControl sx={{ mb: 2 }}>
@@ -106,6 +144,7 @@ const Login = ({ onLogin }) => {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Contraseña"
                 required
+                // disabled={loading}
               />
             </FormControl>
             {error && (
@@ -113,8 +152,14 @@ const Login = ({ onLogin }) => {
                 {error}
               </Typography>
             )}
-            <Button type="submit" variant="solid" fullWidth >
-              Entrar
+            <Button 
+              type="submit" 
+              variant="solid" 
+              fullWidth 
+              // loading={loading}
+              // disabled={loading}
+            > Entrar
+              {/* {loading ? 'Verificando...' : 'Entrar'} */}
             </Button>
           </form>
           <Typography
