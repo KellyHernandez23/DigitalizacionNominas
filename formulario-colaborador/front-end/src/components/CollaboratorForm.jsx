@@ -4,12 +4,13 @@ import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
 import { FormControl, TextField, InputLabel, Select, MenuItem, 
   Card, CardContent, Typography, CardActions, 
-  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel} from '@mui/material';
+  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, CircularProgress, Box} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
 
 function CollaboratorForm() {
   //#region Estados
+  const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [signature, setSignature] = useState(null);
   const webcamRef = useRef(null);
@@ -99,7 +100,7 @@ function CollaboratorForm() {
   const handleRadioChange = (event) => {
     setTieneHijos(event.target.value);
     if (event.target.value === "No") {
-      setCantidadHijos('');
+      setCantidadHijos(0);
     }
   };
 
@@ -179,6 +180,7 @@ function CollaboratorForm() {
   const handleSave = async (e) => {
   e.preventDefault();
   setError('');
+  setLoading(true);
 
   try {
     // 1. Primero guardar el contacto de emergencia principal
@@ -301,57 +303,10 @@ function CollaboratorForm() {
     console.error('Error completo:', error);
     setError('Error: ' + error.message);
     alert('Error: ' + error.message);
-  }
-};
-
-
-//   const handleSave = async (e) => {
-//   e.preventDefault();
-//   setError('');
-//   try {
-//     const response = await fetch('http://localhost:5000/api/add-prospecto', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ 
-//         nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
-//         fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
-//         estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
-//         calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
-//         codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
-//         telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
-//         nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
-//         procedimientos_medicos: procedimientosMedicos, 
-//         infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, 
-//         id_contacto_emergencia: null, id_detalles_puesto: null
-//       }),
-//     });
-
-//     console.log('Status:', response.status);
-//     console.log('Status text:', response.statusText);
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-//     console.log('Response data:', data);
-
-//     if (data.success) {
-//       setError('');
-//       console.log('Prospecto agregado:', data.nombre);
-//       alert('Datos guardados exitosamente');
-//     } else {
-//       setError(data.error || 'No se pudo guardar el prospecto');
-//       alert('Error al guardar: ' + (data.error || 'Error desconocido'));
-//     }
-//   } catch (error) {
-//     console.error('Error completo:', error);
-//     setError('Error de conexión con el servidor: ' + error.message);
-//     alert('Error de conexión: ' + error.message);
-//   }
-// };
+  }finally {
+      setLoading(false);
+    }
+  };
   //#endregion
 
   return (
@@ -359,6 +314,29 @@ function CollaboratorForm() {
     <h2>Bienvenido</h2> 
     <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
         Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
+
+        {/* Mostrar loader mientras se carga */}
+      {loading && (
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%', 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+            zIndex: 9999 
+          }}
+        >
+          <CircularProgress size={60} sx={{ color: 'white' }} />
+          <Typography variant="h6" sx={{ color: 'white', ml: 2 }}>
+            Guardando datos...
+          </Typography>
+        </Box>
+      )}
     <Card className='card size'>
       <h4>Formulario de Registro</h4>
       <div>
@@ -929,9 +907,16 @@ function CollaboratorForm() {
 
        </div>
     </Card>
-      <div className='btn-save'>
-        <Button variant="contained" onClick={handleSave} endIcon={<SaveIcon />}>Guardar datos</Button>
-       </div>
+        <div className='btn-save'>
+        <Button 
+          variant="contained" 
+          onClick={handleSave} 
+          endIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+          disabled={loading} // Deshabilitar botón durante la carga
+        >
+          {loading ? 'Guardando...' : 'Guardar datos'}
+        </Button>
+      </div>      
     
       
       {/* Captura de fotografía */}
@@ -949,5 +934,6 @@ function CollaboratorForm() {
     </div>
   );
 }
+
 
 export default CollaboratorForm;
