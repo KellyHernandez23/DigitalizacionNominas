@@ -4,7 +4,8 @@ import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
 import { FormControl, TextField, InputLabel, Select, MenuItem, 
   Card, CardContent, Typography, CardActions, 
-  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, CircularProgress, Box} from '@mui/material';
+  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, CircularProgress, Box,
+Snackbar, Alert} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
 
@@ -16,6 +17,7 @@ function CollaboratorForm() {
   const webcamRef = useRef(null);
   const signatureRef = useRef(null);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   // Estados del prospecto
   const [nombre, setNombre] = useState('');
@@ -62,6 +64,55 @@ function CollaboratorForm() {
   const [procedimientosMedicos, setProcedimientosMedicos] = useState('');
 
 
+  //#endregion
+
+//#region Función para resetear el formulario
+  const resetForm = () => {
+    setNombre('');
+    setApellidoPaterno('');
+    setApellidoMaterno('');
+    setEmail('');
+    setEmailError('');
+    setTelefonoCasa('');
+    setTelefonoCelular('');
+    setEstadoNacimiento('');
+    setCurp('');
+    setRfc('');
+    setUmf('');
+    setNss('');
+    setNoCuenta('');
+    setCp('');
+    setNoExterior('');
+    setNoInterior('');
+    setTieneHijos('');
+    setCantidadHijos('');
+    setInfonavit('');
+    setFonacot('');
+    setPension('');
+    setNombreMadre('');
+    setNombrePadre('');
+    setTipoSangre('');
+    setCalle('');
+    setColonia('');
+    setLocalidad('');
+    setMunicipio('');
+    setEstado('');
+    setFechaNacimiento('');
+    setSexo('');
+    setEstadoCivil('');
+    setEscolaridad('');
+    setHijos('');
+    setAlergias('');
+    setParentesco('');
+    setNombreEmergencia('');
+    setTelefonoContactoEmergencia('');
+    setNombreEmergenciaO('');
+    setTelefonoContactoEmergenciaO('');
+    setParentescoO('');
+    setProcedimientosMedicos('');
+    setPhoto(null);
+    setSignature(null);
+  };
   //#endregion
 
   //#region Handlers
@@ -294,7 +345,9 @@ function CollaboratorForm() {
 
     // Éxito - todos los datos guardados
     setError('');
-    alert('¡Todos los datos guardados exitosamente!');
+    setSuccess(true);
+    resetForm();
+    // alert('¡Todos los datos guardados exitosamente!');
     
     // Opcional: resetear el formulario
     // resetForm();
@@ -306,6 +359,11 @@ function CollaboratorForm() {
   }finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSuccess(false);
+    setError('');
   };
   //#endregion
 
@@ -337,6 +395,30 @@ function CollaboratorForm() {
           </Typography>
         </Box>
       )}
+
+{/* Mensajes de éxito y error */}
+      <Snackbar 
+        open={success} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          ¡Todos los datos guardados exitosamente!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
+
     <Card className='card size'>
       <h4>Formulario de Registro</h4>
       <div>
