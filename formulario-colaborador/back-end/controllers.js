@@ -11,17 +11,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Endpoint usando dbVacaciones
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
-  const query = 'SELECT * FROM empleados WHERE id = ? AND passw = ?';
+app.post('/api/GetRFC', (req, res) => {
+  const { rfc } = req.body;
+  const query = 'SELECT * FROM empleados WHERE rfc = ?';
 
-  dbVacaciones.query(query, [username, password], (err, results) => {
+  dbVacaciones.query(query, [rfc], (err, results) => {
     if (err) return res.status(500).json({ error: 'Error del servidor' });
 
     if (results.length > 0) {
       res.json({ success: true, user: results[0] });
     } else {
-      res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
+      res.status(401).json({ success: false, error: 'RFC no encontrado' });
     }
   });
 });

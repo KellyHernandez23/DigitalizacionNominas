@@ -16,3 +16,8 @@
     height: 22rem;;
 }
 
+p{
+    color: #979797;
+    font-style: oblique;
+    font-size: smaller;
+}
