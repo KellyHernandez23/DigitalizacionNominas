@@ -17,6 +17,7 @@ import {
 import LogoAlze from '../../../assets/img/logo_alze.png';
 import { data, useNavigate } from 'react-router-dom';
 import '../Login/Login.css'
+import InfoIcon from '@mui/icons-material/Info';
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -127,11 +128,12 @@ const Login = () => {
               component="h2"
               id="modal-title"
               level="h4"
-              textColor="inherit"
-              sx={{ fontWeight: 'lg', mb: 1 }}
-            >
+              textColor="text.tertiary"
+              sx={{ fontWeight: 'mb', mb: 1 }}
+              
+            ><div style={{display:'flex', gap:'.5rem'}}><InfoIcon /> Información</div>  
             </Typography>
-            <Typography id="modal-desc" textColor="text.tertiary">
+            <Typography id="modal-desc" textColor="text.tertiary"> 
               {id !== '' ? `El RFC ya existe y se encuentra asociado con el ID: ${id}.` :
               'El RFC no existe en la base de datos. Por favor, procede a llenar el formulario.'
                 }
