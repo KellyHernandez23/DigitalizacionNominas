@@ -8,6 +8,7 @@ import { FormControl, TextField, InputLabel, Select, MenuItem,
 Snackbar, Alert} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
+import QRScannerComponent from './QRScannerComponent';
 
 function CollaboratorForm() {
   //#region Estados
@@ -370,7 +371,7 @@ function CollaboratorForm() {
     <h2>Bienvenido</h2> 
     <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
         Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
-
+<QRScannerComponent/>
 {/* Mostrar loader mientras se carga */}
       {loading && (
         <Box 

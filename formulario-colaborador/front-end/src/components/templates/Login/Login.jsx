@@ -80,6 +80,7 @@ const Login = () => {
         setOpen(true)
       }
     } catch (error) {
+      setOpen(true)
       console.error('Error de conexión:', error);
       setError('Error de conexión con el servidor');
     }
