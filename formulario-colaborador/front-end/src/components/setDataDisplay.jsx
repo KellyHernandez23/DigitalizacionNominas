@@ -24,32 +24,42 @@ const SatDataDisplay = ({ datos }) => {
           <DataRow label="Apellido Paterno" value={datos.apellidoPaterno} />
           <DataRow label="Apellido Materno" value={datos.apellidoMaterno} />
           <DataRow label="Fecha Nacimiento" value={datos.fechaNacimiento} />
+          <DataRow label="Situación" value={datos.situacionContribuyente} />
         </div>
 
         {/* Domicilio Fiscal */}
         <div>
           <h4>🏠 Domicilio Fiscal</h4>
-          <DataRow label="Domicilio" value={datos.domicilio} />
-          <DataRow label="Colonia" value={datos.colonia} />
-          <DataRow label="Ciudad" value={datos.ciudad} />
-          <DataRow label="Municipio" value={datos.municipio} />
-          <DataRow label="Estado" value={datos.estado} />
-          <DataRow label="Código Postal" value={datos.codigoPostal} />
+          {datos.domicilio ? (
+            <>
+              <DataRow label="Estado" value={datos.domicilio.entidadFederativa} />
+              <DataRow label="Municipio" value={datos.domicilio.municipio} />
+              <DataRow label="Colonia" value={datos.domicilio.colonia} />
+              <DataRow label="Calle" value={datos.domicilio.nombreVialidad} />
+              <DataRow label="Número Ext" value={datos.domicilio.numeroExterior} />
+              <DataRow label="Número Int" value={datos.domicilio.numeroInterior} />
+              <DataRow label="CP" value={datos.domicilio.codigoPostal} />
+            </>
+          ) : (
+            <p>No hay información de domicilio</p>
+          )}
         </div>
 
         {/* Datos Fiscales */}
         <div>
           <h4>💰 Datos Fiscales</h4>
           <DataRow label="Régimen Fiscal" value={datos.regimenFiscal} />
-          <DataRow label="Situación Fiscal" value={datos.situacionFiscal} />
           <DataRow label="Fecha Inicio Operaciones" value={datos.fechaInicioOperaciones} />
+          <DataRow label="Fecha Alta Régimen" value={datos.fechaAltaRegimen} />
+          <DataRow label="Administración Local" value={datos.administracionLocal} />
+          <DataRow label="Email" value={datos.email} />
         </div>
 
         {/* Metadatos */}
         <div>
           <h4>📊 Metadatos</h4>
+          <DataRow label="Fuente" value={datos.fuente || 'SAT'} />
           <DataRow label="Fecha Consulta" value={new Date(datos.fechaConsulta).toLocaleString()} />
-          <DataRow label="Tipo Constancia" value={datos.parametrosConsulta?.tipoInfo?.descripcion} />
           {datos.esMock && (
             <DataRow 
               label="⚠️ Nota" 

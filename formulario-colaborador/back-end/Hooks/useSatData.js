@@ -56,7 +56,6 @@ export const useSatData = () => {
     datosCompletos,
     loading,
     error,
-    obtenerDatosCompletos,
-    reset
+    obtenerDatosCompletos
   };
 };
