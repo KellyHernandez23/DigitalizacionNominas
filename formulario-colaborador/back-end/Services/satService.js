@@ -1,11 +1,6 @@
 // services/satService.js
 import { parseSatHtmlResponse, parseSatHtmlWithRegex, parseSatHtmlSimple } from './satHtmlParser';
 
-
-
-/**
- * Servicio para consultar datos completos al SAT
- */
 export class SatService {
   static async obtenerDatosCompletos(parametrosQR) {
     try {
@@ -16,13 +11,7 @@ export class SatService {
       
       if (!datos) {
         throw new Error('No se recibió respuesta del SAT');
-      }     
-
-      // 2. Si falla, intentamos con endpoints alternativos
-    //   if (!datos || !datos.rfc) {
-    //     console.log('Endpoint principal falló, intentando alternativos...');
-    //     datos = await this.consultarEndpointsAlternativos(parametrosQR);
-    //   }
+      }
       
       return datos;
       
