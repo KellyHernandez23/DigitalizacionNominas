@@ -122,13 +122,11 @@ const QRScannerComponent = () => {
   }, []);
 
   return (
-    <><div>
+    <>
       {datosCompletos && (
-  <div>
-    <CollaboratorForm datosSat={datosCompletos} fromScanner={true} />
-  </div>
-)}
-    </div>
+          <CollaboratorForm datosSat={datosCompletos}/>
+
+      )}
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
 
         {/* Solo mostrar escáner si no hay datos */}

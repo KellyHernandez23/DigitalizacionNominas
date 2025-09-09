@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect} from 'react';
 import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
@@ -8,9 +7,8 @@ import { FormControl, TextField, InputLabel, Select, MenuItem,
 Snackbar, Alert} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
-import QRScannerComponent from './QRScannerComponent';
 
-function CollaboratorForm({ datosSat, fromScanner = false  }) {
+function CollaboratorForm({ datosSat}) {
   //#region Estados
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState(null);
@@ -20,10 +18,7 @@ function CollaboratorForm({ datosSat, fromScanner = false  }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const [showScanner, setShowScanner] = useState(false);
-  const [satData, setSatData] = useState(null);
-  const [scannerKey, setScannerKey] = useState(0);
-  const [showWelcome, setShowWelcome] = useState(!fromScanner);
+
 
   // Estados del prospecto
   const [nombre, setNombre] = useState('');
@@ -381,11 +376,8 @@ function CollaboratorForm({ datosSat, fromScanner = false  }) {
     if (datosSat) {
       console.log('Datos SAT recibidos en CollaboratorForm:', datosSat);
       loadSatDataIntoForm(datosSat);
-       if (fromScanner) {
-        setShowWelcome(false);
-      }
     }
-   }, [datosSat, fromScanner]);
+  }, [datosSat]);
 
 // Función para cargar datos SAT en el formulario
   const loadSatDataIntoForm = (datos) => {
@@ -422,78 +414,11 @@ function CollaboratorForm({ datosSat, fromScanner = false  }) {
     return date.toISOString().split('T')[0];
   };
 
-  // Función para toggle del escáner
-  const toggleScanner = () => {
-    setShowScanner(!showScanner);
-    setScannerKey(prev => prev + 1); // Cambiar key para reiniciar el escáner
-  };
+  
   //#endregion
 
   return (
     <div className='font container'>
-       {showWelcome && (
-        <>
-          <h2>Bienvenido</h2> 
-          <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
-            Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
-        </>
-      )}
-    
-{/* Controles del escáner */}
-      <div style={{ 
-        marginBottom: '20px', 
-        textAlign: 'center',
-        padding: '15px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px'
-      }}>
-        <Button 
-          variant="contained" 
-          color="primary"
-          onClick={toggleScanner}
-          style={{ marginRight: '10px' }}
-          startIcon={showScanner ? '📷' : '🔍'}
-        >
-          {showScanner ? 'Ocultar Escáner' : 'Escanear Constancia Fiscal'}
-        </Button>
-        
-        {satData && (
-          <Button 
-            variant="outlined" 
-            color="secondary"
-            onClick={resetForm}
-            style={{ marginLeft: '10px' }}
-          >
-            Limpiar Datos
-          </Button>
-        )}
-      </div>
-
-      {/* Mostrar escáner */}
-      {showScanner && (
-        <div key={scannerKey}>
-          <QRScannerComponent onDataScanned={LoadSatDataIntoForm} />
-        </div>
-      )}
-
-      {/* Indicador de datos cargados */}
-      {satData && !showScanner && (
-        <Alert 
-          severity="success" 
-          style={{ marginBottom: '20px' }}
-          action={
-            <Button 
-              color="inherit" 
-              size="small"
-              onClick={() => setShowScanner(true)}
-            >
-              Escanear otro
-            </Button>
-          }
-        >
-          ✅ Datos de la constancia fiscal cargados automáticamente
-        </Alert>
-      )}
 
 {/* Mostrar loader mientras se carga */}
       {loading && (

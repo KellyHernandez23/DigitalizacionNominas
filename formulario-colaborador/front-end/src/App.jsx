@@ -6,6 +6,7 @@ import Login from './components/templates/Login/Login.jsx';
 import Header from './components/templates/Header.jsx';
 import Footer from './components/templates/Footer.jsx';
 import ProtectedRoute from '../src/components/ProtectedRoute.jsx'
+import Home from './components/Home.jsx';
 import './App.css';
 
 function AppContent() {
@@ -21,14 +22,14 @@ function AppContent() {
           <Route
             path="/"
             element={
-              !isAuthenticated ? <Login /> : <CollaboratorForm />
+              !isAuthenticated ? <Login /> : <Home />
             }
           />
           <Route 
             path="/collaborator-form" 
             element={
               <ProtectedRoute>
-                <CollaboratorForm />
+                <Home />
               </ProtectedRoute>
             } 
           />
