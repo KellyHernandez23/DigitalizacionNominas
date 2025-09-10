@@ -30,17 +30,19 @@ app.post('/api/GetRFC', (req, res) => {
 // Otro endpoint usando dbProspectos
 app.post('/api/add-prospecto', (req, res) => {
     console.log('Datos recibidos:', req.body);
-    
-    const query = `INSERT INTO prospecto(
+    const date = new Date();
+    let dateToday =date.toISOString().slice(0, 19).replace('T', ' ');
+    const query = `INSERT INTO prospecto(fecha_registro,
         nombre_prospecto, apellido_paterno_prospecto, apellido_materno_prospecto,
         fecha_nacimiento, sexo, lugar_nacimiento, estado_civil, curp, rfc, nss, 
         umf, numero_cuenta, calle, numero_exterior, numero_interior, colonia, 
         codigo_postal, localidad, municipio, estado, numero_celular, telefono_casa, 
         correo_cfdi, escolaridad, hijos, nombre_padre, nombre_madre, tipo_sangre, 
         alergias, procedimientos_medicos, infonavit, fonacot, pension_alimenticia, id_detalles_puesto) VALUES 
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
     const values = [
+        dateToday,  
         req.body.nombre_prospecto || null,
         req.body.apellido_paterno_prospecto || null,
         req.body.apellido_materno_prospecto || null,
@@ -71,9 +73,9 @@ app.post('/api/add-prospecto', (req, res) => {
         req.body.tipo_sangre || null,
         req.body.alergias || null,
         req.body.procedimientos_medicos || null,
-        req.body.infonavit === 'true' ? 1 : 0, // Convertir a número
-        req.body.fonacot === 'true' ? 1 : 0,   // Convertir a número
-        req.body.pension_alimenticia === 'true' ? 1 : 0, // Convertir a número
+        req.body.infonavit || null,
+        req.body.fonacot || null,   
+        req.body.pension_alimenticia === 'true' ? 1 : 0, 
         req.body.id_detalles_puesto || null
     ];
 

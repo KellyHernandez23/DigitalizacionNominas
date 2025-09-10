@@ -114,9 +114,6 @@ function CollaboratorForm({ datosSat}) {
     setProcedimientosMedicos('');
     setPhoto(null);
     setSignature(null);
-    setShowScanner(false);
-    setSatData(null);
-    setScannerKey(prev => prev + 1);
   };
   //#endregion
 
@@ -139,6 +136,10 @@ function CollaboratorForm({ datosSat}) {
 
   const handleChangeEstadoCivil = (event) => {
     setEstadoCivil(event.target.value);
+  };
+
+  const handleChangeTipoSangre = (event) => {
+    setTipoSangre(event.target.value);
   };
 
   const handleChangeEscolaridad = (event) => {
@@ -403,7 +404,7 @@ function CollaboratorForm({ datosSat}) {
   };
   //#endregion
 
-
+//#region 
    // Efecto para cargar datos SAT cuando estén disponibles
   useEffect(() => {
    if (datosSat) {
@@ -553,7 +554,20 @@ function CollaboratorForm({ datosSat}) {
         InputLabelProps={{ shrink: true }} 
         size='small' 
         required={true} />
-         <FormControl className='select-sexo' variant="standard" size='small' required={true}>
+          <div className='display'>
+          <TextField 
+            id="standard-basic" 
+            className='textfield' 
+            label="Estado de nacimiento" 
+            variant="standard" 
+            size='small' 
+            value={estadoNacimiento}
+            onChange={(e) => handleTextOnly(setEstadoNacimiento, 30)(e)}
+            inputProps={{ maxLength: 30 }}
+            required={true}
+          />
+          </div>
+       <FormControl className='select-sexo' variant="standard" size='small' required={true}>
            <InputLabel className='' id="select-sexo" size='small'>Sexo</InputLabel>
             <Select 
               id="demo-simple-select-standard"
@@ -570,20 +584,62 @@ function CollaboratorForm({ datosSat}) {
               <MenuItem value="Otro">Otro</MenuItem>
             </Select>
           </FormControl>
-          <div className='display'>
+      </div>
+      <div >
+        <TextField 
+          id="standard-basic" 
+          className='textfield' 
+          label="CURP" 
+          variant="standard" 
+          size='small'  
+          value={curp}
+          disabled={fieldsLocked}
+          onChange={(e) => handleCurpUpper(e)}
+          inputProps={{ maxLength: 18 }}
+          required={true}
+        />        
+         <TextField 
+          id="standard-basic" 
+          className='textfield' 
+          label="RFC" 
+          variant="standard"
+          value={rfc}
+          disabled={fieldsLocked}
+          onChange={(e) => handleRfcUpper(e)}
+          inputProps={{ maxLength: 13 }}
+          required={true}
+        />
+        <TextField 
+          id="standard-basic" 
+          className='textfield' 
+          label="NSS" 
+          variant="standard"
+          value={nss}
+          type='number'
+          onChange={(e) => handleNumberOnly(setNss, 11)(e)}
+          inputProps={{ maxLength: 11 }}
+          required={true}/>
+      </div>
+      <div>
           <TextField 
-            id="standard-basic" 
-            className='textfield' 
-            label="Estado de nacimiento" 
-            variant="standard" 
-            size='small' 
-            value={estadoNacimiento}
-            onChange={(e) => handleTextOnly(setEstadoNacimiento, 30)(e)}
-            inputProps={{ maxLength: 30 }}
-            required={true}
-          />
-          </div>
-      
+          id="standard-basic" 
+          className='textfield-rfc' 
+          label="UMF" 
+          variant="standard"
+          value={umf}
+          onChange={(e) => handleTextNumer(setUmf, 20)(e)}
+          inputProps={{ maxLength: 20 }}
+          required={true}/>
+          <TextField 
+          id="standard-basic" 
+          className='textfield-rfc' 
+          label="No. de Cuenta" 
+          variant="standard"
+          type='number'
+          value={noCuenta}
+          onChange={(e) => handleNumberOnly(setNoCuenta, 25)(e)}
+          inputProps={{ maxLength: 25 }}
+          required={true}/>
       </div>
       <div>
          <FormControl className='select' variant="standard" size='small' required={true}>
@@ -628,65 +684,7 @@ function CollaboratorForm({ datosSat}) {
           </div>
          
 
-      </div>
-      <div >
-        <TextField 
-          id="standard-basic" 
-          className='textfield-rfc' 
-          label="CURP" 
-          variant="standard" 
-          size='small'  
-          value={curp}
-          disabled={fieldsLocked}
-          onChange={(e) => handleCurpUpper(e)}
-          inputProps={{ maxLength: 18 }}
-          required={true}
-        />        
-      </div>
-      <div>
-        <TextField 
-          id="standard-basic" 
-          className='textfield-rfc' 
-          label="RFC" 
-          variant="standard"
-          value={rfc}
-          disabled={fieldsLocked}
-          onChange={(e) => handleRfcUpper(e)}
-          inputProps={{ maxLength: 13 }}
-          required={true}
-        />
-      </div>
-      <div>
-        <TextField 
-          id="standard-basic" 
-          className='textfield' 
-          label="NSS" 
-          variant="standard"
-          value={nss}
-          type='number'
-          onChange={(e) => handleNumberOnly(setNss, 11)(e)}
-          inputProps={{ maxLength: 11 }}
-          required={true}/>
-          <TextField 
-          id="standard-basic" 
-          className='textfield' 
-          label="UMF" 
-          variant="standard"
-          value={umf}
-          onChange={(e) => handleTextNumer(setUmf, 20)(e)}
-          inputProps={{ maxLength: 20 }}
-          required={true}/>
-          <TextField 
-          id="standard-basic" 
-          className='textfield' 
-          label="No. de Cuenta" 
-          variant="standard"
-          type='number'
-          value={noCuenta}
-          onChange={(e) => handleNumberOnly(setNoCuenta, 25)(e)}
-          inputProps={{ maxLength: 25 }}
-          required={true}/>
-      </div>
+      </div>  
       <div>
          <TextField 
           placeholder='ejemplo@dominio.com'
@@ -703,17 +701,6 @@ function CollaboratorForm({ datosSat}) {
           required={true}
         />
         <TextField 
-          id="TelefonoCasa" 
-          className='textfield' 
-          label="Teléfono Casa" 
-          variant="standard" 
-          size="small"
-          type='number'
-          value={telefonoCasa}
-          onChange={(e) => handleNumberOnly(setTelefonoCasa, 10)(e)}
-          inputProps={{maxLength:10}}
-          required={false}/>
-        <TextField 
           id="TelefonoMovil" 
           className='textfield' 
           label="Teléfono Móvil" 
@@ -724,6 +711,17 @@ function CollaboratorForm({ datosSat}) {
           onChange={(e) => handleNumberOnly(setTelefonoCelular, 10)(e)}
           inputProps={{maxLength:10}}
           required={true}/>
+          <TextField 
+          id="TelefonoCasa" 
+          className='textfield' 
+          label="Teléfono Casa" 
+          variant="standard" 
+          size="small"
+          type='number'
+          value={telefonoCasa}
+          onChange={(e) => handleNumberOnly(setTelefonoCasa, 10)(e)}
+          inputProps={{maxLength:10}}
+          required={false}/>
       </div>
 
       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
@@ -925,17 +923,28 @@ function CollaboratorForm({ datosSat}) {
 
       <h4>Datos médicos</h4>
       <div>
-        <TextField
-          id="TipoSangre"
-          className='textfield'
-          label="Tipo de Sangre"
-          variant="standard"
-          size="small"
-          value={tipoSangre}
-          onChange={(e) => handleTextUpper(setTipoSangre, 3)(e)}
-          inputProps={{maxLength:3}}
-          required={true}
-        />
+         <FormControl className='select-sexo' variant="standard" size='small' required={false}>
+           <InputLabel className='select-sexo' id="select-parentescoO" size='small'>Tipo de Sangre</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              label="Tipo de Sangre"
+              value={tipoSangre}
+              onChange={(e) => handleChangeTipoSangre(e)}
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value="A+">A+</MenuItem>
+              <MenuItem value="A-">A-</MenuItem>
+              <MenuItem value="B+">B+</MenuItem>
+              <MenuItem value="B-">B-</MenuItem>
+              <MenuItem value="O+">O+</MenuItem>
+              <MenuItem value="O-">O-</MenuItem>
+              <MenuItem value="AB+">AB+</MenuItem>
+              <MenuItem value="AB-">AB-</MenuItem>
+            </Select>
+          </FormControl>
         <TextField
           id="Alergias"
           className='textfield'
@@ -1025,46 +1034,48 @@ function CollaboratorForm({ datosSat}) {
 
         <h4>Adeudos</h4>
        <div className='div-adeudos'>
-      <FormControl className='radio-group-container'>
-      <FormLabel id="demo-controlled-radio-buttons-group">Infonavit *</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
-        value={infonavit}
-        onChange={(e) => handleChangeInfonavit(e)}
-        required={true}
-      >
-        <FormControlLabel value={true} control={<Radio />} label="Sí" />
-        <FormControlLabel value={false} control={<Radio />} label="No" />
-      </RadioGroup>
-    </FormControl>
-    <FormControl>
-      <FormLabel id="demo-controlled-radio-buttons-group">Fonacot *</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
-        value={fonacot}
-        onChange={(e) => handleChangeFonacot(e)}
-        required={true}
-      >
-        <FormControlLabel value={true} control={<Radio />} label="Sí" />
-        <FormControlLabel value={false} control={<Radio />} label="No" />
-      </RadioGroup>
-    </FormControl>
-    <FormControl>
-      <FormLabel id="demo-controlled-radio-buttons-group">Pensión Alimenticia *</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
+     <TextField
+          id="Infonavit"
+          className='textfield-padres'
+          label="Infonavit"
+          variant="standard"
+          size="small"
+          type='number'
+          value={infonavit}
+          onChange={(e) => handleNumber(setInfonavit, 10)(e)}
+          inputProps={{maxLength:10, minLength:10}}
+          required={false}
+        />
+          <TextField
+          id="Fonacot"
+          className='textfield-padres'
+          label="Fonacot"
+          variant="standard"
+          size="small"
+          type='number'
+          value={fonacot}
+          onChange={(e) => handleNumber(setFonacot, 6)(e)}
+          inputProps={{maxLength:6, minLength:6}}
+          required={false}
+        />
+        <div style={{display:'flex', alignItems:'center'}}>
+          <label className='label'>Pensión Alimenticia *</label>
+        </div>
+        <FormControl style={{paddingTop:0}}> 
+     
+        <RadioGroup className='radio-group-container'
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        name="row-radio-buttons-group"
         value={pension}
         onChange={(e) => handleChangePension(e)}
         required={true}
       >
         <FormControlLabel value={true} control={<Radio />} label="Sí" />
         <FormControlLabel value={false} control={<Radio />} label="No" />
-      </RadioGroup>
-    </FormControl>
 
+      </RadioGroup>
+      </FormControl>
        </div>
     </Card>
         <div className='btn-save'>
