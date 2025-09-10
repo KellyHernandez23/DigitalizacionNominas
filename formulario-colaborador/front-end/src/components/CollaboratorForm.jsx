@@ -17,7 +17,7 @@ function CollaboratorForm({ datosSat}) {
   const signatureRef = useRef(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-
+ const [fieldsLocked, setFieldsLocked] = useState(false);
 
 
   // Estados del prospecto
@@ -178,10 +178,12 @@ function CollaboratorForm({ datosSat}) {
   };
 
   const handleCurpUpper = (event) => {
+     if (fieldsLocked) return;
     setCurp(event.target.value.toUpperCase());
   }
 
   const handleRfcUpper = (event) => {
+     if (fieldsLocked) return;
     setRfc(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
   }
 
@@ -189,9 +191,30 @@ function CollaboratorForm({ datosSat}) {
     setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
   }
 
+  const handleNumberCP = (setter, max) => e => {
+    if (fieldsLocked) return;
+    setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
+  }
+  const handleNumberNE = (setter, max) => e => {
+    if (fieldsLocked) return;
+    setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
+  }
   const handleNumber = (setter, max) => (event) => {
     setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
   }
+  const handleNumeroInterior = (setter, max) => (event) => {
+    setter(event.target.value.replace(/[^0-9abcdefABCDEF]/g, '').slice(0, max));
+  }
+
+  const handleTextSat = (setter, max) => e => {
+     if (fieldsLocked) return;
+    let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ\s]/g, '').slice(0, max);
+    value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
+      (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
+    );
+    setter(value);
+  };
+
 
   const handleTextOnly = (setter, max) => e => {
     let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ\s]/g, '').slice(0, max);
@@ -202,6 +225,15 @@ function CollaboratorForm({ datosSat}) {
   };
 
   const handleTextCapitalize = (setter, max) => e => {
+     if (fieldsLocked) return;
+    let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
+    value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
+      (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
+    );
+    setter(value);
+  };
+
+  const handleTextCapitalizeLocalidad = (setter, max) => e => {
     let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
     value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
       (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
@@ -218,6 +250,7 @@ function CollaboratorForm({ datosSat}) {
   };
 
   const handleTextUpper = (setter, max) => e => {
+     if (fieldsLocked) return;
     let value = e.target.value.replace(/[^a-zA-Z+\s]/g, '').slice(0, max);
     value = value.toUpperCase();
     setter(value);
@@ -373,9 +406,12 @@ function CollaboratorForm({ datosSat}) {
 
    // Efecto para cargar datos SAT cuando estén disponibles
   useEffect(() => {
-    if (datosSat) {
-      console.log('Datos SAT recibidos en CollaboratorForm:', datosSat);
+   if (datosSat) {
+      console.log('Datos SAT recibidos, bloqueando campos...');
+      setFieldsLocked(true);
       loadSatDataIntoForm(datosSat);
+    } else {
+      setFieldsLocked(false);
     }
   }, [datosSat]);
 
@@ -414,6 +450,10 @@ function CollaboratorForm({ datosSat}) {
     return date.toISOString().split('T')[0];
   };
 
+   // Función para desbloquear campos (opcional)
+  const unlockFields = () => {
+    setFieldsLocked(false);
+  };
   
   //#endregion
 
@@ -475,7 +515,8 @@ function CollaboratorForm({ datosSat}) {
           variant="standard" 
           size="small"
           value={nombre}
-            onChange={(e) => handleTextOnly(setNombre, 35)(e)}
+          disabled={fieldsLocked}
+            onChange={(e) => handleTextSat(setNombre, 35)(e)}
           inputProps={{maxLength:35}}
           required={true}/>
         <TextField 
@@ -485,7 +526,8 @@ function CollaboratorForm({ datosSat}) {
           variant="standard" 
           size="small"
           value={apellidoPaterno}
-          onChange={(e) => handleTextOnly(setApellidoPaterno, 30)(e)}
+          disabled={fieldsLocked}
+          onChange={(e) => handleTextSat(setApellidoPaterno, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
         <TextField 
@@ -494,8 +536,9 @@ function CollaboratorForm({ datosSat}) {
           label="Apellido Materno" 
           variant="standard" 
           size="small"
+          disabled={fieldsLocked}
           value={apellidoMaterno}
-          onChange={(e) => handleTextOnly(setApellidoMaterno, 30)(e)}
+          onChange={(e) => handleTextSat(setApellidoMaterno, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
       </div>
@@ -594,20 +637,11 @@ function CollaboratorForm({ datosSat}) {
           variant="standard" 
           size='small'  
           value={curp}
+          disabled={fieldsLocked}
           onChange={(e) => handleCurpUpper(e)}
           inputProps={{ maxLength: 18 }}
           required={true}
-        />
-        <div>
-        <Button 
-          onClick={() => window.open('https://www.gob.mx/curp/')} 
-          className='btn-consultar'
-          variant="contained"
-          size="small"
-          color='inherit'
-        >Consultar CURP</Button>
-        </div>
-        
+        />        
       </div>
       <div>
         <TextField 
@@ -616,19 +650,11 @@ function CollaboratorForm({ datosSat}) {
           label="RFC" 
           variant="standard"
           value={rfc}
+          disabled={fieldsLocked}
           onChange={(e) => handleRfcUpper(e)}
           inputProps={{ maxLength: 13 }}
           required={true}
         />
-        <div>
-          <Button 
-          onClick={() => window.open('https://wwwmat.sat.gob.mx/aplicacion/31274/consulta-tu-clave-de-rfc-mediante-curp')} 
-          variant="contained"
-          className='btn-consultar'
-          size="small"
-          color='inherit'
-          >Consultar RFC</Button>
-        </div>
       </div>
       <div>
         <TextField 
@@ -710,6 +736,7 @@ function CollaboratorForm({ datosSat}) {
           variant="standard"
           size="small"
           value={calle}
+          disabled={fieldsLocked}
           onChange={(e) => handleTextCapitalize(setCalle, 50)(e)}
           inputProps={{maxLength:20}}
           required={true}
@@ -720,6 +747,7 @@ function CollaboratorForm({ datosSat}) {
           label="Colonia"
           variant="standard"
           size="small"
+          disabled={fieldsLocked}
           value={colonia}
           onChange={(e) => handleTextCapitalize(setColonia, 50)(e)}
           inputProps={{maxLength:20}}
@@ -731,8 +759,9 @@ function CollaboratorForm({ datosSat}) {
           label="Número Exterior"
           variant="standard"
           size="small"
+          disabled={fieldsLocked}
           value={noExterior}
-          onChange={(e) => handleNumber(setNoExterior, 5)(e)}
+          onChange={(e) => handleNumberNE(setNoExterior, 5)(e)}
           inputProps={{maxLength:5}}
           required={true}
         />
@@ -743,7 +772,7 @@ function CollaboratorForm({ datosSat}) {
           variant="standard"
           size="small"
           value={noInterior}
-          onChange={(e) => handleNumber(setNoInterior, 5)(e)}
+          onChange={(e) => handleNumeroInterior(setNoInterior, 5)(e)}
           inputProps={{maxLength:5}}
           required={false}
         />
@@ -755,9 +784,10 @@ function CollaboratorForm({ datosSat}) {
           label="Código Postal"
           variant="standard"
           size="small"
+          disabled={fieldsLocked}
           value={cp}
           type='number'
-          onChange={(e) => handleNumberOnly(setCp, 5)(e)}
+          onChange={(e) => handleNumberCP(setCp, 5)(e)}
           inputProps={{maxLength:5}}
           required={true}
         />
@@ -768,7 +798,7 @@ function CollaboratorForm({ datosSat}) {
           variant="standard"
           size="small"
           value={localidad}
-          onChange={(e) => handleTextCapitalize(setLocalidad, 40)(e)}
+          onChange={(e) => handleTextCapitalizeLocalidad(setLocalidad, 40)(e)}
           inputProps={{maxLength:40}}
           required={true}/>
           <TextField
@@ -778,6 +808,7 @@ function CollaboratorForm({ datosSat}) {
           variant="standard"
           size="small"
           value={municipio}
+          disabled={fieldsLocked}
           onChange={(e) => handleTextCapitalize(setMunicipio, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
@@ -788,6 +819,7 @@ function CollaboratorForm({ datosSat}) {
           variant="standard"
           size="small"
           value={estado}
+          disabled={fieldsLocked}
           onChange={(e) => handleTextOnly(setEstado, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>

@@ -107,6 +107,19 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
      padding-bottom:.5rem;
 }
 
+.Mui-disabled {
+  background-color: #f5f5f5 !important;
+  color: #333 !important;
+}
+
+.MuiInput-underline.Mui-disabled:before {
+  border-bottom-style: dashed !important;
+  border-bottom-color: #999 !important;
+}
+
+.textfield.Mui-disabled {
+  background-color: #f9f9f9;
+}
 
 @media (max-width: 480px) {
   h2 {
@@ -127,8 +140,13 @@ label+.css-5h82ro-MuiInputBase-root-MuiInput-root {
   }
   .size div{
     display: block;
-    padding-top: 1.5rem;
+    padding-bottom: 0.2rem;
   }
+
+  label+.css-j218zi-MuiInputBase-root-MuiInput-root-MuiSelect-root{
+    margin-top: 16px !important;
+  }
+
   .textfield-rfc{
     width: 100%;
   }

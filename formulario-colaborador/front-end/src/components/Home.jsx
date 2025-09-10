@@ -8,6 +8,7 @@ function Home() {
     const [showScanner, setShowScanner] = useState(false);
     const [satData, setSatData] = useState(null);
     const [scannerKey, setScannerKey] = useState(0);
+     const [formKey, setFormKey] = useState(0);
 
 // Función para toggle del escáner
   const toggleScanner = () => {
@@ -60,7 +61,7 @@ function Home() {
       {/* Mostrar escáner */}
       {showScanner && (
         <div key={scannerKey}>
-          <QRScannerComponent onDataScanned={(data) => setSatData(data)} />
+          <QRScannerComponent key={formKey}  onDataScanned={(data) => setSatData(data)} />
         </div>
       )}
 

@@ -15,37 +15,10 @@ import {
   Option 
 } from '@mui/joy';
 import LogoAlze from '../../../assets/img/logo_alze.png';
-import { data, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../Login/Login.css'
 import InfoIcon from '@mui/icons-material/Info';
 
-function ModeToggle() {
-  const { mode, setMode } = useColorScheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  if (!mounted) {
-    return <Button variant="soft">Change mode</Button>;
-  }
-
-  return (
-    <Select
-      variant="soft"
-      value={mode}
-      onChange={(event, newMode) => {
-        setMode(newMode);
-      }}
-      sx={{ width: 'max-content', mb: 2 }}
-    >
-      <Option value="system">System</Option>
-      <Option value="light">Light</Option>
-      <Option value="dark">Dark</Option>
-    </Select>
-  );
-}
 
 const Login = () => {
   const [rfc, setRfc] = useState('');
@@ -98,7 +71,6 @@ const Login = () => {
   return (
     <main>
       <CssVarsProvider>
-        <ModeToggle />
         <CssBaseline />
         
         {/* Modal */}
@@ -139,12 +111,15 @@ const Login = () => {
               'El RFC no existe en la base de datos. Por favor, procede a llenar el formulario.'
                 }
             </Typography>
-            <Button 
-              sx={{ mt: 2 }} 
-              onClick={handleModalAction}
-            >
-              {id !== '' ? 'Finalizar' : 'Ir al formulario'}
-            </Button>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Button 
+                sx={{ mt: 2 }} 
+                onClick={handleModalAction}
+              >
+                {id !== '' ? 'Finalizar' : 'Ir al formulario'}
+              </Button>
+            </div>
+            
           </Sheet>
         </Modal>
 
