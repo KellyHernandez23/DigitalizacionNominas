@@ -993,7 +993,7 @@ function CollaboratorForm({ datosSat}) {
           inputProps={{maxLength:80}}
           required={true}
         />
-        <div style={{display:'flex', alignItems:'center'}}>
+        <div className='textfield-radiobutton'>
           <label className='label'>¿Tiene hijos? *</label>
         </div>
      <FormControl style={{paddingTop:0}}> 
@@ -1058,7 +1058,7 @@ function CollaboratorForm({ datosSat}) {
           inputProps={{maxLength:6, minLength:6}}
           required={false}
         />
-        <div style={{display:'flex', alignItems:'center'}}>
+        <div className='textfield-radiobutton'>
           <label className='label'>Pensión Alimenticia *</label>
         </div>
         <FormControl style={{paddingTop:0}}> 
