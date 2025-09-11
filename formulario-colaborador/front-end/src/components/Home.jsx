@@ -38,8 +38,8 @@ function Home() {
 
     return (
         <div>
-            <h2>Bienvenido</h2> 
-            <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
+            <h2 style={{ paddingBottom:'1rem'}}>Bienvenido</h2> 
+            <p style={{ paddingBottom:'1rem'}}>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
                 Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
             
             <div style={{ 
