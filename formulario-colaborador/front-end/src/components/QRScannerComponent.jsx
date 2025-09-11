@@ -4,6 +4,7 @@ import { useSatData } from '../../../back-end/Hooks/useSatData';
 import SatDataDisplay from '../components/setDataDisplay.jsx';
 import { LoadSatDataIntoForm } from '../components/CollaboratorForm.jsx';
 import CollaboratorForm from '../components/CollaboratorForm.jsx';
+import '../components/templates/QRScannerComponent.css';
 
 const QRScannerComponent = () => {
   const [scanResult, setScanResult] = useState('');
@@ -127,34 +128,16 @@ const QRScannerComponent = () => {
           <CollaboratorForm datosSat={datosCompletos}/>
 
       )}
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div className='container-scanner'>
 
         {/* Solo mostrar escáner si no hay datos */}
         {!datosCompletos && !loading && (
           <>
-            <div style={{
-              minHeight: '300px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#f8f9fa',
-              border: '2px dashed #007bff',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              overflow: 'hidden'
-            }}>
-              <div id="reader" style={{
-                width: '100%',
-                minHeight: '300px'
-              }}></div>
-
+            <div className='scanner-placeholder'>
+              <div id="reader"></div>
               {/* Mensaje de carga del escáner */}
               {!isScannerInitialized && !error && (
-                <div style={{
-                  position: 'absolute',
-                  textAlign: 'center',
-                  color: '#6c757d'
-                }}>
+                <div className='scanner-message'>
                   <div style={{ fontSize: '48px', marginBottom: '10px' }}>📷</div>
                   <p>Inicializando cámara...</p>
                 </div>
@@ -167,15 +150,8 @@ const QRScannerComponent = () => {
         {!datosCompletos && !loading && isScannerInitialized && (
           <div style={{ textAlign: 'center', marginBottom: '15px' }}>
             <button
-              onClick={resetScanner}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
+              onClick={resetScanner} 
+              className='reiniciar-button'
             >
               Reiniciar Escáner
             </button>
@@ -184,87 +160,32 @@ const QRScannerComponent = () => {
 
         {/* Loading state */}
         {loading && (
-          <div style={{
-            textAlign: 'center',
-            padding: '40px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            border: '1px solid #dee2e6'
-          }}>
+          <div className='loading-state'>
             <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
             <h3>Consultando datos en el SAT</h3>
             <p>Esto puede tomar unos segundos...</p>
-            <div style={{
-              width: '100%',
-              height: '4px',
-              backgroundColor: '#e9ecef',
-              borderRadius: '2px',
-              margin: '20px 0'
-            }}>
-              <div style={{
-                width: '75%',
-                height: '100%',
-                backgroundColor: '#007bff',
-                borderRadius: '2px',
-                animation: 'loading 1.5s infinite'
-              }}></div>
+            <div className='loading-state-div'>
+              <div className='loading'></div>
             </div>
           </div>
         )}
 
         {/* Mostrar errores */}
         {(error || satError) && (
-          <div style={{
-            padding: '15px',
-            backgroundColor: '#f8d7da',
-            color: '#721c24',
-            borderRadius: '8px',
-            marginBottom: '20px',
-            border: '1px solid #f5c6cb'
-          }}>
+          <div className='error'>
             <h4>❌ Error</h4>
             <p>{error || satError}</p>
             <button
               onClick={resetScanner}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#dc3545',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginTop: '10px'
-              }}
+              className='btn-error'
             >
               Reintentar
             </button>
           </div>
         )}
-
-        {/* Mostrar datos completos cuando estén listos */}
-        {datosCompletos && (
-          <>
-            <div>
-              <div style={{
-                display: 'flex',
-                gap: '10px',
-                justifyContent: 'center',
-                marginTop: '20px'
-              }}>
-                
-              </div>
-            </div>
-          </>
-        )}
-
         {/* Información de ayuda */}
         {!datosCompletos && !loading && (
-          <div style={{
-            backgroundColor: '#e3f2fd',
-            padding: '15px',
-            borderRadius: '8px',
-            marginTop: '20px'
-          }}>
+          <div className='info'>
             <h4 style={{ margin: '0 0 10px 0', color: '#1565c0' }}>💡 Instrucciones:</h4>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
               <li>Asegúrate de permitir el acceso a la cámara cuando el navegador lo solicite</li>
@@ -283,7 +204,7 @@ const QRScannerComponent = () => {
           }
         `}
         </style>
-      </div></>
+    </div></>
   );
 };
 

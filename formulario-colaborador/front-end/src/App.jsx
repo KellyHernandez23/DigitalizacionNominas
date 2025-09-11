@@ -14,7 +14,7 @@ function AppContent() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div className="App">
+    <div className="app">
       {/* Header se muestra automáticamente cuando no está en la página de login */}
       <Header />
       <main className="main-content">

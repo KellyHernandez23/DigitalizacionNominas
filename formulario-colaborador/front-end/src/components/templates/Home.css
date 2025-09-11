@@ -1,0 +1,15 @@
+.container-home {
+    height: 100dvh;
+}
+
+@media (max-width: 768px) {
+    .container-home {
+        height: 10rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container-home {
+        height: 10rem;
+    }   
+}
