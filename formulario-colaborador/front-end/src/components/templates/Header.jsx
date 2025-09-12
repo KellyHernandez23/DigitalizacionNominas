@@ -102,7 +102,6 @@ function Header() {
           )}
           
           {/* Botón de logout solo para usuarios autenticados */}
-          {user && (
             <button
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}
               onClick={handleLogout}
@@ -110,7 +109,6 @@ function Header() {
             >
               <LogoutIcon color='#1D192B'/>
             </button>
-          )}
         </div>
       </div>
     </header>
