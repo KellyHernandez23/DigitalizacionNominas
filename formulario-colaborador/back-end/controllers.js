@@ -171,102 +171,49 @@ app.post('/api/add-prospecto-contacto', (req, res) => {
     });
 });
 
-//DELETE prospecto-contacto
+// DELETE prospecto-contacto
 app.delete('/api/delete-prospecto-contacto', (req, res) => {
-    console.log('Datos recibidos:', req.body);
+  const { id_prospecto, id_contacto_emergencia } = req.body;
+  const query = `DELETE FROM prospecto_contacto_emergencia WHERE id_prospecto = ? AND id_contacto_emergencia = ?`;
 
-    const query = `DELETE FROM prospecto_contacto_emergencia WHERE id_prospecto = ? AND id_contacto_emergencia = ?`;
-
-    const values = 
-    [
-        req.body.id_prospecto || null,
-        req.body.id_contacto_emergencia || null
-    ] 
-
-    console.log('Valores a eliminar:', values);
-
-    dbProspectos.query(query, values, (error, results) => {
-        if (error) {
-            console.error('Error en la consulta:', error);
-            return res.status(500).json({
-                success: false,
-                error: 'Error interno del servidor: ' + error.message,
-                sqlError: error.sqlMessage,
-                sql: error.sql
-            });
-        }
-
-        console.log('Resultado de la eliminación:', results);
-        res.json({
-            success: true,
-            message: 'Contacto de emergencia eliminado exitosamente',
-            id: req.body.id_contacto_emergencia
-        });
-    });
+  dbProspectos.query(query, [id_prospecto, id_contacto_emergencia], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Relación eliminada exitosamente' });
+  });
 });
 
-
-//DELETE contacto-emergencia
+// DELETE contacto-emergencia
 app.post('/api/delete-contacto-emergencia', (req, res) => {
-    console.log('Datos recibidos:', req.body);
+  const { id_contacto_emergencia } = req.body;
+  const query = `DELETE FROM contacto_emergencia WHERE id_contacto_emergencia = ?`;
 
-    const query = `DELETE FROM contacto_emergencia WHERE id = ?`;
-
-    const values = 
-    [
-        req.body.id_contacto_emergencia || null
-    ];
-
-    console.log('Valores a eliminar:', values);
-
-    dbProspectos.query(query, values, (error, results) => {
-        if (error) {
-            console.error('Error en la consulta:', error);
-            return res.status(500).json({
-                success: false,
-                error: 'Error interno del servidor: ' + error.message,
-                sqlError: error.sqlMessage,
-                sql: error.sql
-            });
-        }
-
-        console.log('Resultado de la eliminación:', results);
-        res.json({
-            success: true,
-            message: 'Contacto de emergencia eliminado exitosamente',
-            id: req.body.id_contacto_emergencia
-        });
-    });
+  dbProspectos.query(query, [id_contacto_emergencia], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Contacto eliminado exitosamente' });
+  });
 });
 
-
-//DELETE prospecto
+// DELETE prospecto
 app.post('/api/delete-prospecto', (req, res) => {
-    console.log('Datos recibidos:', req.body);
-    const query = `DELETE FROM prospecto WHERE id = ?`;
-    const values = [req.body.id || null];
+  const { id } = req.body;
+  const query = `DELETE FROM prospecto WHERE id_prospectos = ?`;
 
-    console.log('Valores a eliminar:', values);
-
-    dbProspectos.query(query, values, (error, results) => {
-        if (error) {
-            console.error('Error en la consulta:', error);
-            return res.status(500).json({
-                success: false,
-                error: 'Error interno del servidor: ' + error.message,
-                sqlError: error.sqlMessage,
-                sql: error.sql
-            });
-        }
-
-        console.log('Resultado de la eliminación:', results);
-        res.json({
-            success: true,
-            message: 'Prospecto eliminado exitosamente',
-            id: req.body.id
-        });
-    });
+  dbProspectos.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Prospecto eliminado exitosamente' });
+  });
 });
+
+
 
 
 app.listen(port, () => {

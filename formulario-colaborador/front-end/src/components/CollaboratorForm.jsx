@@ -132,6 +132,7 @@ function CollaboratorForm({ datosSat}) {
   //   setFonacot(event.target.value);
   // };
   
+
   const handleChangePension = (event) => {
     setPension(event.target.value);
   };
@@ -280,10 +281,149 @@ function CollaboratorForm({ datosSat}) {
     }
   }
 
+  // const handleSave = async (e) => {
+  // e.preventDefault();
+  // setError('');
+  // setLoading(true);
+
+  // try {
+  //   // 1. Primero guardar el contacto de emergencia principal
+  //   const contactoResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ 
+  //       nombre_contacto: nombreEmergencia,
+  //       telefono: telefonoContactoEmergencia,
+  //       parentesco: parentesco
+  //     }),
+  //   });
+
+  //   if (!contactoResponse.ok) {
+  //     throw new Error(`Error al guardar contacto: ${contactoResponse.status}`);
+  //   }
+
+  //     const contactoData = await contactoResponse.json();
+  //     console.log('Contacto principal guardado:', contactoData);
+
+  //     // 2. Guardar contacto opcional si existe
+  //     let contactoOpcionalData = null;
+  //     if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
+  //       const contactoOpcionalResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ 
+  //           nombre_contacto: nombreEmergenciaO,
+  //           telefono: telefonoContactoEmergenciaO,
+  //           parentesco: parentescoO
+  //         }),
+  //       });
+        
+  //       if (!contactoOpcionalResponse.ok) {
+  //         console.warn('Error al guardar contacto opcional');
+  //         } else {
+  //         contactoOpcionalData = await contactoOpcionalResponse.json();
+  //         console.log('Contacto opcional guardado:', contactoOpcionalData);
+  //     }
+  //   }
+
+  //         // 3. Guardar el prospecto (sin IDs de contactos ya que usamos tabla intermedia)
+  //         const prospectoResponse = await fetch('http://localhost:5000/api/add-prospecto', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ 
+  //           nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
+  //           fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
+  //           estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
+  //           calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
+  //           codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
+  //           telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
+  //           nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
+  //           procedimientos_medicos: procedimientosMedicos, 
+  //           infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, id_detalles_puesto: null
+  //           }),
+  //         });
+
+  //           if (!prospectoResponse.ok) {
+  //             throw new Error(`Error al guardar prospecto: ${prospectoResponse.status}`);
+  //           }
+
+  //             const prospectoData = await prospectoResponse.json();
+  //             console.log('Prospecto guardado:', prospectoData);
+
+  //             // 4. Crear relación con contacto principal en tabla intermedia
+  //             const relacionPrincipalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
+  //               method: 'POST',
+  //               headers: {
+  //                 'Content-Type': 'application/json',
+  //               },
+  //               body: JSON.stringify({ 
+  //                 id_prospecto: prospectoData.id, 
+  //                 id_contacto_emergencia: contactoData.id
+  //               }),
+  //             });
+
+  //             if (!relacionPrincipalResponse.ok) {
+  //               throw new Error(`Error al crear relación principal: ${relacionPrincipalResponse.status}`);
+  //   }
+
+  //               const relacionPrincipalData = await relacionPrincipalResponse.json();
+  //               console.log('Relación principal creada:', relacionPrincipalData);
+
+  //               // 5. Crear relación con contacto opcional si existe
+  //               if (contactoOpcionalData) {
+  //                 const relacionOpcionalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
+  //                   method: 'POST',
+  //                   headers: {
+  //                     'Content-Type': 'application/json',
+  //                   },
+  //                   body: JSON.stringify({ 
+  //                     id_prospecto: prospectoData.id,
+  //                     id_contacto_emergencia: contactoOpcionalData.id
+  //                   }),
+  //                 });
+
+  //                 if (!relacionOpcionalResponse.ok) {
+  //                   console.warn('Error al crear relación opcional');
+  //                 } else {
+  //                   const relacionOpcionalData = await relacionOpcionalResponse.json();
+  //                   console.log('Relación opcional creada:', relacionOpcionalData);
+  //                 }
+  //               }
+
+  //               // Éxito - todos los datos guardados
+  //               setError('');
+  //               resetForm();
+  //               setSuccess(true);
+  //                // Retrasar la navegación para que el usuario pueda ver el mensaje
+  //               timeoutRef.current = setTimeout(() => {
+  //                 navigate('/');
+  //               }, 4000); // 4 segundos de retraso
+
+  //   } catch (error) {
+  //     console.error('Error completo:', error);
+  //       setError('Error: ' + error.message);
+  //       setSuccess(false);
+  // }finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
   const handleSave = async (e) => {
   e.preventDefault();
   setError('');
   setLoading(true);
+
+  // Variables para almacenar IDs creados (para rollback)
+  let createdProspectoId = null;
+  let createdContactoIds = [];
+  let createdRelationships = [];
 
   try {
     // 1. Primero guardar el contacto de emergencia principal
@@ -303,115 +443,187 @@ function CollaboratorForm({ datosSat}) {
       throw new Error(`Error al guardar contacto: ${contactoResponse.status}`);
     }
 
-      const contactoData = await contactoResponse.json();
-      console.log('Contacto principal guardado:', contactoData);
+    const contactoData = await contactoResponse.json();
+    console.log('Contacto principal guardado:', contactoData);
+    createdContactoIds.push(contactoData.id);
 
-      // 2. Guardar contacto opcional si existe
-      let contactoOpcionalData = null;
-      if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
-        const contactoOpcionalResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            nombre_contacto: nombreEmergenciaO,
-            telefono: telefonoContactoEmergenciaO,
-            parentesco: parentescoO
-          }),
-        });
-        
-        if (!contactoOpcionalResponse.ok) {
-          console.warn('Error al guardar contacto opcional');
-          } else {
-          contactoOpcionalData = await contactoOpcionalResponse.json();
-          console.log('Contacto opcional guardado:', contactoOpcionalData);
+    // 2. Guardar contacto opcional si existe
+    let contactoOpcionalData = null;
+    if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
+      const contactoOpcionalResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          nombre_contacto: nombreEmergenciaO,
+          telefono: telefonoContactoEmergenciaO,
+          parentesco: parentescoO
+        }),
+      });
+      
+      if (!contactoOpcionalResponse.ok) {
+        console.warn('Error al guardar contacto opcional');
+      } else {
+        contactoOpcionalData = await contactoOpcionalResponse.json();
+        console.log('Contacto opcional guardado:', contactoOpcionalData);
+        createdContactoIds.push(contactoOpcionalData.id);
       }
     }
 
-          // 3. Guardar el prospecto (sin IDs de contactos ya que usamos tabla intermedia)
-          const prospectoResponse = await fetch('http://localhost:5000/api/add-prospecto', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
-            fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
-            estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
-            calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
-            codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
-            telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
-            nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
-            procedimientos_medicos: procedimientosMedicos, 
-            infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, id_detalles_puesto: null
-            }),
-          });
+    // 3. Guardar el prospecto
+    const prospectoResponse = await fetch('http://localhost:5000/api/add-prospecto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
+        fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
+        estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
+        calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
+        codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
+        telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
+        nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
+        procedimientos_medicos: procedimientosMedicos, 
+        infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, id_detalles_puesto: null
+      }),
+    });
 
-            if (!prospectoResponse.ok) {
-              throw new Error(`Error al guardar prospecto: ${prospectoResponse.status}`);
-            }
-
-              const prospectoData = await prospectoResponse.json();
-              console.log('Prospecto guardado:', prospectoData);
-
-              // 4. Crear relación con contacto principal en tabla intermedia
-              const relacionPrincipalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                  id_prospecto: prospectoData.id, 
-                  id_contacto_emergencia: contactoData.id
-                }),
-              });
-
-              if (!relacionPrincipalResponse.ok) {
-                throw new Error(`Error al crear relación principal: ${relacionPrincipalResponse.status}`);
+    if (!prospectoResponse.ok) {
+      throw new Error(`Error al guardar prospecto: ${prospectoResponse.status}`);
     }
 
-                const relacionPrincipalData = await relacionPrincipalResponse.json();
-                console.log('Relación principal creada:', relacionPrincipalData);
+    const prospectoData = await prospectoResponse.json();
+    console.log('Prospecto guardado:', prospectoData);
+    createdProspectoId = prospectoData.id;
 
-                // 5. Crear relación con contacto opcional si existe
-                if (contactoOpcionalData) {
-                  const relacionOpcionalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                      id_prospecto: prospectoData.id,
-                      id_contacto_emergencia: contactoOpcionalData.id
-                    }),
-                  });
+    // 4. Crear relación con contacto principal en tabla intermedia
+    const relacionPrincipalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        id_prospecto: prospectoData.id, 
+        id_contacto_emergencia: contactoData.id
+      }),
+    });
 
-                  if (!relacionOpcionalResponse.ok) {
-                    console.warn('Error al crear relación opcional');
-                  } else {
-                    const relacionOpcionalData = await relacionOpcionalResponse.json();
-                    console.log('Relación opcional creada:', relacionOpcionalData);
-                  }
-                }
+    if (!relacionPrincipalResponse.ok) {
+      throw new Error(`Error al crear relación principal: ${relacionPrincipalResponse.status}`);
+    }
 
-                // Éxito - todos los datos guardados
-                setError('');
-                resetForm();
-                setSuccess(true);
-                 // Retrasar la navegación para que el usuario pueda ver el mensaje
-                timeoutRef.current = setTimeout(() => {
-                  navigate('/');
-                }, 4000); // 4 segundos de retraso
+    const relacionPrincipalData = await relacionPrincipalResponse.json();
+    console.log('Relación principal creada:', relacionPrincipalData);
+    createdRelationships.push({ 
+      prospectoId: prospectoData.id, 
+      contactoId: contactoData.id 
+    });
 
+    // 5. Crear relación con contacto opcional si existe
+    if (contactoOpcionalData) {
+      const relacionOpcionalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id_prospecto: prospectoData.id,
+          id_contacto_emergencia: contactoOpcionalData.id
+        }),
+      });
+
+      if (!relacionOpcionalResponse.ok) {
+        console.warn('Error al crear relación opcional');
+      } else {
+        const relacionOpcionalData = await relacionOpcionalResponse.json();
+        console.log('Relación opcional creada:', relacionOpcionalData);
+        createdRelationships.push({ 
+          prospectoId: prospectoData.id, 
+          contactoId: contactoOpcionalData.id 
+        });
+      }
+    }
+
+    // Éxito - todos los datos guardados
+    setError('');
+    resetForm();
+    setSuccess(true);
+    
+    // Retrasar la navegación para que el usuario pueda ver el mensaje
+    timeoutRef.current = setTimeout(() => {
+      navigate('/');
+    }, 4000);
+
+  } catch (error) {
+    console.error('Error completo:', error);
+    setError('Error: ' + error.message);
+    setSuccess(false);
+    
+    // Ejecutar rollback para eliminar todos los registros creados
+    try {
+      await executeRollback(createdProspectoId, createdContactoIds, createdRelationships);
+      console.log('Rollback ejecutado exitosamente');
+    } catch (rollbackError) {
+      console.error('Error durante el rollback:', rollbackError);
+      setError(prevError => prevError + '. Además, hubo un problema al revertir los cambios. Contacte al administrador.');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Función para ejecutar el rollback
+const executeRollback = async (prospectoId, contactoIds, relationships) => {
+  // 1. Eliminar relaciones primero (por restricciones de clave foránea)
+  for (const relationship of relationships) {
+    try {
+      await fetch('http://localhost:5000/api/delete-prospecto-contacto', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id_prospecto: relationship.prospectoId,
+          id_contacto_emergencia: relationship.contactoId
+        }),
+      });
     } catch (error) {
-      console.error('Error completo:', error);
-        setError('Error: ' + error.message);
-        setSuccess(false);
-  }finally {
-      setLoading(false);
+      console.warn('Error eliminando relación:', error);
     }
-  };
+  }
+
+  // 2. Eliminar prospecto si fue creado
+  if (prospectoId) {
+    try {
+      await fetch('http://localhost:5000/api/delete-prospecto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: prospectoId }),
+      });
+    } catch (error) {
+      console.warn('Error eliminando prospecto:', error);
+    }
+  }
+
+  // 3. Eliminar contactos de emergencia
+  for (const contactoId of contactoIds) {
+    try {
+      await fetch('http://localhost:5000/api/delete-contacto-emergencia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_contacto_emergencia: contactoId }),
+      });
+    } catch (error) {
+      console.warn('Error eliminando contacto:', error);
+    }
+  }
+};
 
    const handleCloseAlert = () => {
     setSuccess(false);
