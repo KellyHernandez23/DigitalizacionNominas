@@ -2,6 +2,18 @@
     height: 100dvh;
 }
 
+.font h2 {
+  padding-bottom: 2rem;
+}
+
+.font p {
+  color: #979797;
+  font-style: oblique;
+  font-size: smaller;
+  padding-bottom: 1rem;
+}
+
+
 @media (max-width: 768px) {
     .container-home {
         height: 10rem;

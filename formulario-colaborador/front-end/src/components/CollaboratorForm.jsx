@@ -3,10 +3,15 @@ import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
 import { FormControl, TextField, InputLabel, Select, MenuItem, 
   Card, CardContent, Typography, CardActions, 
-  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, CircularProgress, Box,
-Snackbar, Alert} from '@mui/material';
+  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, Box,
+Snackbar} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Alert, AspectRatio, IconButton, LinearProgress } from '@mui/joy';
 import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
+import { useNavigate } from 'react-router-dom';
+import { Check, Close} from '@mui/icons-material';
+import WarningIcon from '@mui/icons-material/Warning';
 
 function CollaboratorForm({ datosSat}) {
   //#region Estados
@@ -17,8 +22,9 @@ function CollaboratorForm({ datosSat}) {
   const signatureRef = useRef(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
- const [fieldsLocked, setFieldsLocked] = useState(false);
-
+  const [fieldsLocked, setFieldsLocked] = useState(false);
+  const navigate = useNavigate();
+  const timeoutRef = useRef(null);
 
   // Estados del prospecto
   const [nombre, setNombre] = useState('');
@@ -118,13 +124,13 @@ function CollaboratorForm({ datosSat}) {
   //#endregion
 
   //#region Handlers
-  const handleChangeInfonavit = (event) => {
-    setInfonavit(event.target.value);
-  };
+  // const handleChangeInfonavit = (event) => {
+  //   setInfonavit(event.target.value);
+  // };
   
-  const handleChangeFonacot = (event) => {
-    setFonacot(event.target.value);
-  };
+  // const handleChangeFonacot = (event) => {
+  //   setFonacot(event.target.value);
+  // };
   
   const handleChangePension = (event) => {
     setPension(event.target.value);
@@ -203,6 +209,11 @@ function CollaboratorForm({ datosSat}) {
   const handleNumber = (setter, max) => (event) => {
     setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
   }
+
+  const handleNumberInfonavit = (setter, max) => (event) => {
+    setter(event.target.value.replace(/[^0-9A,N,n,a]/g, '').slice(0, max));
+  }
+
   const handleNumeroInterior = (setter, max) => (event) => {
     setter(event.target.value.replace(/[^0-9abcdefABCDEF]/g, '').slice(0, max));
   }
@@ -386,8 +397,12 @@ function CollaboratorForm({ datosSat}) {
 
                 // Éxito - todos los datos guardados
                 setError('');
-                setSuccess(true);
                 resetForm();
+                setSuccess(true);
+                 // Retrasar la navegación para que el usuario pueda ver el mensaje
+                timeoutRef.current = setTimeout(() => {
+                  navigate('/');
+                }, 4000); // 4 segundos de retraso
 
     } catch (error) {
       console.error('Error completo:', error);
@@ -398,10 +413,17 @@ function CollaboratorForm({ datosSat}) {
     }
   };
 
-  const handleCloseSnackbar = () => {
+   const handleCloseAlert = () => {
     setSuccess(false);
     setError('');
+
+    // Si el usuario cierra manualmente el alert, cancelar la navegación automática
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
   };
+
+  
   //#endregion
 
 //#region 
@@ -413,6 +435,9 @@ function CollaboratorForm({ datosSat}) {
       loadSatDataIntoForm(datosSat);
     } else {
       setFieldsLocked(false);
+    }
+    if(timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
   }, [datosSat]);
 
@@ -459,7 +484,7 @@ function CollaboratorForm({ datosSat}) {
   //#endregion
 
   return (
-    <div className='font container'>
+    <div className='container'>
 
 {/* Mostrar loader mientras se carga */}
       {loading && (
@@ -484,28 +509,127 @@ function CollaboratorForm({ datosSat}) {
         </Box>
       )}
 
-{/* Mensajes de éxito y error */}
-      <Snackbar 
-        open={success} 
-        autoHideDuration={6000} 
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          ¡Todos los datos guardados exitosamente!
+ {/* Mensajes de éxito y error*/}
+      {success && (
+        <Alert
+          size="lg"
+          color="success"
+          variant="solid"
+          invertedColors
+          startDecorator={
+            <AspectRatio
+              variant="solid"
+              ratio="1"
+              sx={{
+                minWidth: 40,
+                borderRadius: '50%',
+                color: 'white',
+                boxShadow: '0 2px 12px 0 rgb(0 0 0/0.2)',
+              }}
+            >
+              <div>
+                <Check fontSize="medium" />
+              </div>
+            </AspectRatio>
+          }
+          endDecorator={
+            <IconButton
+              variant="plain"
+              sx={{
+                '--IconButton-size': '32px',
+                transform: 'translate(0.5rem, -0.5rem)',
+              }}
+              onClick={handleCloseAlert}
+            >
+              <Close />
+            </IconButton>
+          }
+          sx={{ 
+            alignItems: 'flex-start', 
+            overflow: 'hidden',
+            position: 'fixed',
+            top: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10000,
+            width: '80%',
+            maxWidth: 600
+          }}
+        >
+          <div>
+            <Typography level="title-lg">Éxito</Typography>
+            <Typography level="body-sm">
+              ¡Todos los datos guardados exitosamente!
+            </Typography>
+          </div>
+          <LinearProgress
+            variant="solid"
+            color="success"
+            value={40}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderRadius: 0,
+            }}
+          />
         </Alert>
-      </Snackbar>
+      )}
 
-      <Snackbar 
-        open={!!error} 
-        autoHideDuration={6000} 
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          {error}
+      {error && (
+        <Alert
+          variant="soft"
+          color="danger"
+          invertedColors
+          startDecorator={
+              <WarningIcon style={{fontSize: 'x-large'}} />
+          }
+          endDecorator={
+            <IconButton
+              variant="plain"
+              sx={{
+                '--IconButton-size': '32px',
+                transform: 'translate(0.5rem, -0.5rem)',
+              }}
+              onClick={handleCloseAlert}
+            >
+              <Close />
+            </IconButton>
+          }
+          sx={{ 
+            alignItems: 'flex-start', 
+            gap: '1rem',
+            position: 'fixed',
+            top: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10000,
+            width: '80%',
+            maxWidth: 600
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Typography style={{color:'#7d1212', fontWeight: 'bold', fontSize: 'medium'}} level="title-md">Error</Typography>
+            <Typography style={{color:'#c41c1c', fontWeight:'lighter'}} level="body-md">
+              {error}
+            </Typography>
+              <LinearProgress
+            variant="solid"
+            color="success"
+            value={40}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderRadius: 0,
+            }}
+          />
+          </Box>
         </Alert>
-      </Snackbar>
+        
+      )}
     <Card className='card size'>
       <h4>Formulario de Registro</h4>
       <div>
@@ -1040,9 +1164,8 @@ function CollaboratorForm({ datosSat}) {
           label="Infonavit"
           variant="standard"
           size="small"
-          type='number'
           value={infonavit}
-          onChange={(e) => handleNumber(setInfonavit, 10)(e)}
+          onChange={(e) => handleNumberInfonavit(setInfonavit, 10)(e)}
           inputProps={{maxLength:10, minLength:10}}
           required={false}
         />
@@ -1052,9 +1175,8 @@ function CollaboratorForm({ datosSat}) {
           label="Fonacot"
           variant="standard"
           size="small"
-          type='number'
           value={fonacot}
-          onChange={(e) => handleNumber(setFonacot, 6)(e)}
+          onChange={(e) => handleNumberInfonavit(setFonacot, 6)(e)}
           inputProps={{maxLength:6, minLength:6}}
           required={false}
         />

@@ -1,4 +1,3 @@
-import '../components/templates/CollaboratorForm.css';
 import QRScannerComponent from './QRScannerComponent';
 import { useState } from 'react'; 
 import { Button, Alert } from '@mui/material';
@@ -37,7 +36,7 @@ function Home() {
     };
 
     return (
-        <div>
+        <div className='font'>
             <h2 style={{ paddingBottom:'1rem'}}>Bienvenido</h2> 
             <p style={{ paddingBottom:'1rem'}}>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
                 Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
@@ -62,7 +61,7 @@ function Home() {
                 {/* Botón para mostrar/ocultar el formulario */}
                 <Button 
                     variant="contained" 
-                    color="info"
+                    color="primary"
                     onClick={toggleForm}
                     style={{ marginRight: '10px', marginBottom:'1rem' }}
                 >

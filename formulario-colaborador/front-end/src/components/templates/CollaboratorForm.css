@@ -1,17 +1,6 @@
-.font h2 {
-  padding-bottom: 2rem;
-}
-
 .container {
   padding: 20px;
   width: 100%;
-}
-
-.font p {
-  color: #979797;
-  font-style: oblique;
-  font-size: smaller;
-  padding-bottom: 1rem;
 }
 
 .card {
@@ -119,6 +108,18 @@ label + .css-5h82ro-MuiInputBase-root-MuiInput-root {
 .textfield-radiobutton{
   display: flex; 
   align-items: center;
+}
+
+p.MuiTypography-root.MuiTypography-body1.css-rizt0-MuiTypography-root{
+  color: white;
+    font-style: normal;
+    font-weight: 700;
+}
+
+p.MuiTypography-root.MuiTypography-body1.css-rizt0-MuiTypography-root{
+    color: white;
+    font-style: normal;
+    font-size: small;
 }
 
 /* Media queries para dispositivos móviles */
