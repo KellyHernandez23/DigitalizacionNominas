@@ -38,8 +38,8 @@ app.post('/api/add-prospecto', (req, res) => {
         umf, numero_cuenta, calle, numero_exterior, numero_interior, colonia, 
         codigo_postal, localidad, municipio, estado, numero_celular, telefono_casa, 
         correo_cfdi, escolaridad, hijos, nombre_padre, nombre_madre, tipo_sangre, 
-        alergias, procedimientos_medicos, infonavit, fonacot, pension_alimenticia, id_detalles_puesto) VALUES 
-        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        alergias, procedimientos_medicos, infonavit, fonacot, pension_alimenticia, firma, id_detalles_puesto) VALUES 
+        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
     const values = [
         dateToday,  
@@ -76,6 +76,7 @@ app.post('/api/add-prospecto', (req, res) => {
         req.body.infonavit || null,
         req.body.fonacot || null,   
         req.body.pension_alimenticia === 'true' ? 1 : 0, 
+        req.body.firma || null,
         req.body.id_detalles_puesto || null
     ];
 

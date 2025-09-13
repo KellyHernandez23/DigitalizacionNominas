@@ -181,7 +181,15 @@ function CollaboratorForm({ datosSat}) {
   };
 
   const saveSignature = () => {
-    const sigData = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
+  if (signatureRef.current && !signatureRef.current.isEmpty()) {
+    // Use toDataURL() instead of getTrimmedCanvas()
+    const sigData = signatureRef.current.toDataURL();
+    setSignature(sigData);
+  }
+  };
+
+  const resetSignature = () => {
+    const sigData = signatureRef.current.clear();
     setSignature(sigData);
   };
 
@@ -424,6 +432,8 @@ function CollaboratorForm({ datosSat}) {
   let createdProspectoId = null;
   let createdContactoIds = [];
   let createdRelationships = [];
+  // const sigData = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
+  // setSignature(sigData);
 
   try {
     // 1. Primero guardar el contacto de emergencia principal
@@ -486,7 +496,8 @@ function CollaboratorForm({ datosSat}) {
         telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
         nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
         procedimientos_medicos: procedimientosMedicos, 
-        infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, id_detalles_puesto: null
+        infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, firma: sigData, 
+        id_detalles_puesto: null
       }),
     });
 
@@ -1411,6 +1422,25 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
       </RadioGroup>
       </FormControl>
        </div>
+
+       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
+      {/* Firma digital */}
+      <div style={{display: 'flex', justifyContent: 'center', paddingBottom:'0.5rem'}}>
+        <Button type='button' color='inherit' variant="contained" onClick={resetSignature}>Limpiar Firma</Button>
+      </div>
+      
+      <div style={{ border: '1px solid rgb(170, 170, 170)', width: 'max-content', paddingTop: 'unset', display: 'flex', justifySelf: 'center' }}>
+        <SignatureCanvas ref={signatureRef} canvasProps={{ width: 320, height: 100, className: 'sigCanvas' }} />
+      </div>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+          <h4>Firma Digital</h4>
+      </div>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+          <p>Rectifico que la información proporcionada es verídica</p> 
+      </div>
+      
+      <button onClick={saveSignature}>Guardar Firma</button><br />
+      {signature && <img src={signature} alt="Firma" width={160} />}
     </Card>
         <div className='btn-save'>
         <Button 
@@ -1430,11 +1460,7 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
       <button onClick={capturePhoto}>Tomar Foto</button><br />
       {photo && <img src={photo} alt="Foto capturada" width={160} />} */}
 
-      {/* Firma digital */}
-      {/* <h3>Firma Digital</h3>
-      <SignatureCanvas ref={signatureRef} canvasProps={{ width: 320, height: 100, className: 'sigCanvas' }} />
-      <button onClick={saveSignature}>Guardar Firma</button><br />
-      {signature && <img src={signature} alt="Firma" width={160} />} */}
+     
 
     </div>
   );
