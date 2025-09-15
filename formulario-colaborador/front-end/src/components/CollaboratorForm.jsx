@@ -1338,21 +1338,21 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
 
       </RadioGroup>
       </FormControl>
-       </div>
+      </div>
 
-       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
+       <Divider style={{ marginTop: '2rem', marginBottom: '2rem' }} />
       {/* Firma digital */}
-      <div style={{display: 'flex', justifyContent: 'center', paddingBottom:'0.5rem'}}>
+      <div style={{display: 'flex', justifyContent: 'center', paddingBottom:'0.5rem', paddingTop: '0px'}}>
         <Button type='button' color='inherit' variant="contained" onClick={resetSignature}>Limpiar Firma</Button>
       </div>
       
-      <div style={{ border: '1px solid rgb(170, 170, 170)', width: 'max-content', paddingTop: 'unset', display: 'flex', justifySelf: 'center' }}>
+      <div style={{ border: '1px solid rgb(170, 170, 170)', borderRadius:'1rem', width: 'max-content', paddingTop: 'unset', display: 'flex', justifySelf: 'center' }}>
         <SignatureCanvas ref={signatureRef} canvasProps={{ width: 320, height: 100, className: 'sigCanvas' }} />
       </div>
-      <div style={{display: 'flex', justifyContent: 'center'}}>
+      <div className='div-firma'>
           <h4>Firma Digital</h4>
       </div>
-      <div style={{display: 'flex', justifyContent: 'center'}}>
+      <div className='div-firma'>
           <p>Rectifico que la información proporcionada es verídica</p> 
       </div>
       {/* {firmaBase64 && <img src={firmaBase64} alt="Firma" width={160} />} */}

@@ -121,6 +121,10 @@ p.MuiTypography-root.MuiTypography-body1.css-rizt0-MuiTypography-root{
     font-style: normal;
     font-size: small;
 }
+.div-firma{
+  display: flex !important;
+  justify-content: center !important;
+}
 
 /* Media queries para dispositivos móviles */
 @media (max-width: 768px) {
@@ -167,6 +171,10 @@ p.MuiTypography-root.MuiTypography-body1.css-rizt0-MuiTypography-root{
   .MuiInputBase-root {
     width: 100%;
   }
+  .div-firma{
+  display: flex !important;
+  justify-content: center !important;
+}
 }
 
 @media (max-width: 480px) {
@@ -203,5 +211,10 @@ p.MuiTypography-root.MuiTypography-body1.css-rizt0-MuiTypography-root{
 .textfield-radiobutton{
   display: flex; 
   align-items: start;
+}
+.div-firma{
+  display: flex !important;
+  justify-content: center !important;
+  flex-direction: row !important;
 }
 }
