@@ -30,19 +30,18 @@ app.post('/api/GetRFC', (req, res) => {
 // Otro endpoint usando dbProspectos
 app.post('/api/add-prospecto', (req, res) => {
     console.log('Datos recibidos:', req.body);
-    const date = new Date();
-    let dateToday =date.toISOString().slice(0, 19).replace('T', ' ');
+    const dateToday = new Date().toISOString().slice(0, 19).replace('T', ' '); 
     const query = `INSERT INTO prospecto(fecha_registro,
         nombre_prospecto, apellido_paterno_prospecto, apellido_materno_prospecto,
         fecha_nacimiento, sexo, lugar_nacimiento, estado_civil, curp, rfc, nss, 
         umf, numero_cuenta, calle, numero_exterior, numero_interior, colonia, 
         codigo_postal, localidad, municipio, estado, numero_celular, telefono_casa, 
         correo_cfdi, escolaridad, hijos, nombre_padre, nombre_madre, tipo_sangre, 
-        alergias, procedimientos_medicos, infonavit, fonacot, pension_alimenticia, firma, id_detalles_puesto) VALUES 
-        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        alergias, procedimientos_medicos, infonavit, fonacot, pension_alimenticia, id_detalles_puesto) VALUES 
+        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
     const values = [
-        dateToday,  
+        dateToday,
         req.body.nombre_prospecto || null,
         req.body.apellido_paterno_prospecto || null,
         req.body.apellido_materno_prospecto || null,
@@ -76,7 +75,6 @@ app.post('/api/add-prospecto', (req, res) => {
         req.body.infonavit || null,
         req.body.fonacot || null,   
         req.body.pension_alimenticia === 'true' ? 1 : 0, 
-        req.body.firma || null,
         req.body.id_detalles_puesto || null
     ];
 
@@ -172,6 +170,58 @@ app.post('/api/add-prospecto-contacto', (req, res) => {
     });
 });
 
+
+app.post('/api/add-firma', (req, res) => {
+  const { id_prospecto, nombre_archivo, image_base64, tipo, fecha_creacion } = req.body;
+
+  // Validar que tenemos los datos necesarios
+  if (!image_base64) {
+    return res.status(400).json({
+      success: false,
+      error: 'Datos de imagen requeridos'
+    });
+  }
+
+  // Convertir base64 a buffer (binario)
+  let imageBuffer;
+  try {
+    imageBuffer = Buffer.from(image_base64, 'base64');
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      error: 'Formato base64 inválido'
+    });
+  }
+
+  const query = `INSERT INTO firma_prospecto (id_prospecto, nombre_archivo, image_blob, tipo, fecha_creacion) VALUES (?, ?, ?, ?, ?)`;
+  const values = [
+    id_prospecto || null,
+    nombre_archivo || 'firma.png',
+    imageBuffer, // Aquí enviamos el buffer binario
+    tipo || 'image/png',
+    fecha_creacion || new Date().toISOString().slice(0, 19).replace('T', ' ')
+  ];
+
+  dbProspectos.query(query, values, (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Error interno del servidor: ' + error.message,
+        sqlError: error.sqlMessage,
+        sql: error.sql
+      });
+    }
+
+    console.log('Firma guardada exitosamente');
+    res.json({
+      success: true,
+      message: 'Firma agregada exitosamente',
+      id: results.insertId
+    });
+  });
+});
+
 // DELETE prospecto-contacto
 app.delete('/api/delete-prospecto-contacto', (req, res) => {
   const { id_prospecto, id_contacto_emergencia } = req.body;
@@ -183,6 +233,19 @@ app.delete('/api/delete-prospecto-contacto', (req, res) => {
       return res.status(500).json({ error: 'Error interno del servidor' });
     }
     res.json({ success: true, message: 'Relación eliminada exitosamente' });
+  });
+});
+
+// DELETE firma
+app.delete('/api/delete-firma', (req, res) => {
+  const { id_prospecto } = req.body;
+  const query = `DELETE FROM firma_prospecto WHERE id_prospecto = ?`;
+  dbProspectos.query(query, [id_prospecto], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Firma eliminada exitosamente' });
   });
 });
 
