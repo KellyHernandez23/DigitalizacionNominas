@@ -1355,9 +1355,7 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
       <div style={{display: 'flex', justifyContent: 'center'}}>
           <p>Rectifico que la información proporcionada es verídica</p> 
       </div>
-      
-      <button onClick={saveSignature}>Guardar Firma</button><br />
-      {signature && <img src={signature} alt="Firma" width={160} />}
+      {/* {firmaBase64 && <img src={firmaBase64} alt="Firma" width={160} />} */}
     </Card>
         <div className='btn-save'>
         <Button 
