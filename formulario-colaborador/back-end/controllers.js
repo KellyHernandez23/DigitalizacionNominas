@@ -11,17 +11,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Endpoint usando dbVacaciones
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
-  const query = 'SELECT * FROM empleados WHERE id = ? AND passw = ?';
+app.post('/api/GetRFC', (req, res) => {
+  const { rfc } = req.body;
+  const query = 'SELECT * FROM empleados WHERE rfc = ?';
 
-  dbVacaciones.query(query, [username, password], (err, results) => {
+  dbVacaciones.query(query, [rfc], (err, results) => {
     if (err) return res.status(500).json({ error: 'Error del servidor' });
 
     if (results.length > 0) {
       res.json({ success: true, user: results[0] });
     } else {
-      res.status(401).json({ success: false, error: 'Credenciales incorrectas' });
+      res.status(401).json({ success: false, error: 'RFC no encontrado' });
     }
   });
 });
@@ -30,17 +30,18 @@ app.post('/api/login', (req, res) => {
 // Otro endpoint usando dbProspectos
 app.post('/api/add-prospecto', (req, res) => {
     console.log('Datos recibidos:', req.body);
-    
-    const query = `INSERT INTO prospecto(
+    const dateToday = new Date().toISOString().slice(0, 19).replace('T', ' '); 
+    const query = `INSERT INTO prospecto(fecha_registro,
         nombre_prospecto, apellido_paterno_prospecto, apellido_materno_prospecto,
         fecha_nacimiento, sexo, lugar_nacimiento, estado_civil, curp, rfc, nss, 
         umf, numero_cuenta, calle, numero_exterior, numero_interior, colonia, 
         codigo_postal, localidad, municipio, estado, numero_celular, telefono_casa, 
         correo_cfdi, escolaridad, hijos, nombre_padre, nombre_madre, tipo_sangre, 
         alergias, procedimientos_medicos, infonavit, fonacot, pension_alimenticia, id_detalles_puesto) VALUES 
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
     const values = [
+        dateToday,
         req.body.nombre_prospecto || null,
         req.body.apellido_paterno_prospecto || null,
         req.body.apellido_materno_prospecto || null,
@@ -71,9 +72,9 @@ app.post('/api/add-prospecto', (req, res) => {
         req.body.tipo_sangre || null,
         req.body.alergias || null,
         req.body.procedimientos_medicos || null,
-        req.body.infonavit === 'true' ? 1 : 0, // Convertir a número
-        req.body.fonacot === 'true' ? 1 : 0,   // Convertir a número
-        req.body.pension_alimenticia === 'true' ? 1 : 0, // Convertir a número
+        req.body.infonavit || null,
+        req.body.fonacot || null,   
+        req.body.pension_alimenticia === 'true' ? 1 : 0, 
         req.body.id_detalles_puesto || null
     ];
 
@@ -168,6 +169,114 @@ app.post('/api/add-prospecto-contacto', (req, res) => {
         });
     });
 });
+
+
+app.post('/api/add-firma', (req, res) => {
+  const { id_prospecto, nombre_archivo, image_base64, tipo, fecha_creacion } = req.body;
+
+  // Validar que tenemos los datos necesarios
+  if (!image_base64) {
+    return res.status(400).json({
+      success: false,
+      error: 'Datos de imagen requeridos'
+    });
+  }
+
+  // Convertir base64 a buffer (binario)
+  let imageBuffer;
+  try {
+    imageBuffer = Buffer.from(image_base64, 'base64');
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      error: 'Formato base64 inválido'
+    });
+  }
+
+  const query = `INSERT INTO firma_prospecto (id_prospecto, nombre_archivo, image_blob, tipo, fecha_creacion) VALUES (?, ?, ?, ?, ?)`;
+  const values = [
+    id_prospecto || null,
+    nombre_archivo || 'firma.png',
+    imageBuffer, // Aquí enviamos el buffer binario
+    tipo || 'image/png',
+    fecha_creacion || new Date().toISOString().slice(0, 19).replace('T', ' ')
+  ];
+
+  dbProspectos.query(query, values, (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Error interno del servidor: ' + error.message,
+        sqlError: error.sqlMessage,
+        sql: error.sql
+      });
+    }
+
+    console.log('Firma guardada exitosamente');
+    res.json({
+      success: true,
+      message: 'Firma agregada exitosamente',
+      id: results.insertId
+    });
+  });
+});
+
+// DELETE prospecto-contacto
+app.delete('/api/delete-prospecto-contacto', (req, res) => {
+  const { id_prospecto, id_contacto_emergencia } = req.body;
+  const query = `DELETE FROM prospecto_contacto_emergencia WHERE id_prospecto = ? AND id_contacto_emergencia = ?`;
+
+  dbProspectos.query(query, [id_prospecto, id_contacto_emergencia], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Relación eliminada exitosamente' });
+  });
+});
+
+// DELETE firma
+app.delete('/api/delete-firma', (req, res) => {
+  const { id_prospecto } = req.body;
+  const query = `DELETE FROM firma_prospecto WHERE id_prospecto = ?`;
+  dbProspectos.query(query, [id_prospecto], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Firma eliminada exitosamente' });
+  });
+});
+
+// DELETE contacto-emergencia
+app.post('/api/delete-contacto-emergencia', (req, res) => {
+  const { id_contacto_emergencia } = req.body;
+  const query = `DELETE FROM contacto_emergencia WHERE id_contacto_emergencia = ?`;
+
+  dbProspectos.query(query, [id_contacto_emergencia], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Contacto eliminado exitosamente' });
+  });
+});
+
+// DELETE prospecto
+app.post('/api/delete-prospecto', (req, res) => {
+  const { id } = req.body;
+  const query = `DELETE FROM prospecto WHERE id_prospectos = ?`;
+
+  dbProspectos.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error en la consulta:', error);
+      return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+    res.json({ success: true, message: 'Prospecto eliminado exitosamente' });
+  });
+});
+
 
 
 

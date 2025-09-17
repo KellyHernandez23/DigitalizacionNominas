@@ -1,15 +1,19 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect} from 'react';
 import Webcam from 'react-webcam';
 import SignatureCanvas from 'react-signature-canvas';
 import { FormControl, TextField, InputLabel, Select, MenuItem, 
   Card, CardContent, Typography, CardActions, 
-  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, CircularProgress, Box,
-Snackbar, Alert} from '@mui/material';
+  Button, Divider, Radio, RadioGroup, FormControlLabel, FormLabel, Box,
+Snackbar} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Alert, AspectRatio, IconButton, LinearProgress } from '@mui/joy';
 import SaveIcon from '@mui/icons-material/Save';
 import './templates/CollaboratorForm.css';
+import { useNavigate } from 'react-router-dom';
+import { Check, Close} from '@mui/icons-material';
+import WarningIcon from '@mui/icons-material/Warning';
 
-function CollaboratorForm() {
+function CollaboratorForm({ datosSat}) {
   //#region Estados
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState(null);
@@ -18,6 +22,9 @@ function CollaboratorForm() {
   const signatureRef = useRef(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [fieldsLocked, setFieldsLocked] = useState(false);
+  const navigate = useNavigate();
+  const timeoutRef = useRef(null);
 
   // Estados del prospecto
   const [nombre, setNombre] = useState('');
@@ -66,8 +73,9 @@ function CollaboratorForm() {
 
   //#endregion
 
-//#region Función para resetear el formulario
+//#region Función para resetear el formulario (modificada)
   const resetForm = () => {
+    // Resetear todos los campos
     setNombre('');
     setApellidoPaterno('');
     setApellidoMaterno('');
@@ -116,14 +124,15 @@ function CollaboratorForm() {
   //#endregion
 
   //#region Handlers
-  const handleChangeInfonavit = (event) => {
-    setInfonavit(event.target.value);
-  };
+  // const handleChangeInfonavit = (event) => {
+  //   setInfonavit(event.target.value);
+  // };
   
-  const handleChangeFonacot = (event) => {
-    setFonacot(event.target.value);
-  };
+  // const handleChangeFonacot = (event) => {
+  //   setFonacot(event.target.value);
+  // };
   
+
   const handleChangePension = (event) => {
     setPension(event.target.value);
   };
@@ -134,6 +143,10 @@ function CollaboratorForm() {
 
   const handleChangeEstadoCivil = (event) => {
     setEstadoCivil(event.target.value);
+  };
+
+  const handleChangeTipoSangre = (event) => {
+    setTipoSangre(event.target.value);
   };
 
   const handleChangeEscolaridad = (event) => {
@@ -168,15 +181,34 @@ function CollaboratorForm() {
   };
 
   const saveSignature = () => {
-    const sigData = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
+  let firmaBase64 = null;
+  if (signatureRef.current && !signatureRef.current.isEmpty()) {
+    const sigData = signatureRef.current.toDataURL();
+    setSignature(sigData);
+    
+    if (sigData.includes('base64,')) {
+      firmaBase64 = sigData.split('base64,')[1];
+    } else {
+      firmaBase64 = sigData; 
+    }
+    return firmaBase64;
+  }
+  return null;
+};
+
+
+  const resetSignature = () => {
+    const sigData = signatureRef.current.clear();
     setSignature(sigData);
   };
 
   const handleCurpUpper = (event) => {
+     if (fieldsLocked) return;
     setCurp(event.target.value.toUpperCase());
   }
 
   const handleRfcUpper = (event) => {
+     if (fieldsLocked) return;
     setRfc(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''));
   }
 
@@ -184,9 +216,35 @@ function CollaboratorForm() {
     setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
   }
 
+  const handleNumberCP = (setter, max) => e => {
+    if (fieldsLocked) return;
+    setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
+  }
+  const handleNumberNE = (setter, max) => e => {
+    if (fieldsLocked) return;
+    setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
+  }
   const handleNumber = (setter, max) => (event) => {
     setter(event.target.value.replace(/[^0-9]/g, '').slice(0, max));
   }
+
+  const handleNumberInfonavit = (setter, max) => (event) => {
+    setter(event.target.value.replace(/[^0-9A,N,n,a]/g, '').slice(0, max));
+  }
+
+  const handleNumeroInterior = (setter, max) => (event) => {
+    setter(event.target.value.replace(/[^0-9abcdefABCDEF]/g, '').slice(0, max));
+  }
+
+  const handleTextSat = (setter, max) => e => {
+     if (fieldsLocked) return;
+    let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ\s]/g, '').slice(0, max);
+    value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
+      (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
+    );
+    setter(value);
+  };
+
 
   const handleTextOnly = (setter, max) => e => {
     let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ\s]/g, '').slice(0, max);
@@ -197,6 +255,15 @@ function CollaboratorForm() {
   };
 
   const handleTextCapitalize = (setter, max) => e => {
+     if (fieldsLocked) return;
+    let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
+    value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
+      (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
+    );
+    setter(value);
+  };
+
+  const handleTextCapitalizeLocalidad = (setter, max) => e => {
     let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
     value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
       (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
@@ -213,6 +280,7 @@ function CollaboratorForm() {
   };
 
   const handleTextUpper = (setter, max) => e => {
+     if (fieldsLocked) return;
     let value = e.target.value.replace(/[^a-zA-Z+\s]/g, '').slice(0, max);
     value = value.toUpperCase();
     setter(value);
@@ -234,6 +302,15 @@ function CollaboratorForm() {
   e.preventDefault();
   setError('');
   setLoading(true);
+  const firmaBase64 = saveSignature();
+
+  // Variables para almacenar IDs creados (para rollback)
+  let createdProspectoId = null;
+  let createdProspectoNombre = '';
+  let createdContactoIds = [];
+  let createdRelationships = [];
+  // const sigData = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
+  // setSignature(sigData);
 
   try {
     // 1. Primero guardar el contacto de emergencia principal
@@ -253,123 +330,301 @@ function CollaboratorForm() {
       throw new Error(`Error al guardar contacto: ${contactoResponse.status}`);
     }
 
-      const contactoData = await contactoResponse.json();
-      console.log('Contacto principal guardado:', contactoData);
+    const contactoData = await contactoResponse.json();
+    console.log('Contacto principal guardado:', contactoData);
+    createdContactoIds.push(contactoData.id);
 
-      // 2. Guardar contacto opcional si existe
-      let contactoOpcionalData = null;
-      if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
-        const contactoOpcionalResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            nombre_contacto: nombreEmergenciaO,
-            telefono: telefonoContactoEmergenciaO,
-            parentesco: parentescoO
-          }),
-        });
-        
-        if (!contactoOpcionalResponse.ok) {
-          console.warn('Error al guardar contacto opcional');
-          } else {
-          contactoOpcionalData = await contactoOpcionalResponse.json();
-          console.log('Contacto opcional guardado:', contactoOpcionalData);
+    // 2. Guardar contacto opcional si existe
+    let contactoOpcionalData = null;
+    if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
+      const contactoOpcionalResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          nombre_contacto: nombreEmergenciaO,
+          telefono: telefonoContactoEmergenciaO,
+          parentesco: parentescoO
+        }),
+      });
+      
+      if (!contactoOpcionalResponse.ok) {
+        console.warn('Error al guardar contacto opcional');
+      } else {
+        contactoOpcionalData = await contactoOpcionalResponse.json();
+        console.log('Contacto opcional guardado:', contactoOpcionalData);
+        createdContactoIds.push(contactoOpcionalData.id);
       }
     }
 
-          // 3. Guardar el prospecto (sin IDs de contactos ya que usamos tabla intermedia)
-          const prospectoResponse = await fetch('http://localhost:5000/api/add-prospecto', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
-            fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
-            estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
-            calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
-            codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
-            telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
-            nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
-            procedimientos_medicos: procedimientosMedicos, 
-            infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, id_detalles_puesto: null
-            }),
-          });
+    // 3. Guardar el prospecto
+    const prospectoResponse = await fetch('http://localhost:5000/api/add-prospecto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
+        fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
+        estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
+        calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
+        codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
+        telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
+        nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
+        procedimientos_medicos: procedimientosMedicos, 
+        infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, 
+        id_detalles_puesto: null
+      }),
+    });
 
-            if (!prospectoResponse.ok) {
-              throw new Error(`Error al guardar prospecto: ${prospectoResponse.status}`);
-            }
-
-              const prospectoData = await prospectoResponse.json();
-              console.log('Prospecto guardado:', prospectoData);
-
-              // 4. Crear relación con contacto principal en tabla intermedia
-              const relacionPrincipalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                  id_prospecto: prospectoData.id, 
-                  id_contacto_emergencia: contactoData.id
-                }),
-              });
-
-              if (!relacionPrincipalResponse.ok) {
-                throw new Error(`Error al crear relación principal: ${relacionPrincipalResponse.status}`);
+    if (!prospectoResponse.ok) {
+      throw new Error(`Error al guardar prospecto: ${prospectoResponse.status}`);
     }
 
-                const relacionPrincipalData = await relacionPrincipalResponse.json();
-                console.log('Relación principal creada:', relacionPrincipalData);
+    const prospectoData = await prospectoResponse.json();
+    console.log('Prospecto guardado:', prospectoData);
+    createdProspectoId = prospectoData.id;
+    createdProspectoNombre = prospectoData.nombre+'_'+apellidoPaterno+'_'+apellidoMaterno;
 
-                // 5. Crear relación con contacto opcional si existe
-                if (contactoOpcionalData) {
-                  const relacionOpcionalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                      id_prospecto: prospectoData.id,
-                      id_contacto_emergencia: contactoOpcionalData.id
-                    }),
-                  });
 
-                  if (!relacionOpcionalResponse.ok) {
-                    console.warn('Error al crear relación opcional');
-                  } else {
-                    const relacionOpcionalData = await relacionOpcionalResponse.json();
-                    console.log('Relación opcional creada:', relacionOpcionalData);
-                  }
-                }
+    //4. Insertar firma
+  if (firmaBase64) {
+      const firmaResponse = await fetch('http://localhost:5000/api/add-firma', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_prospecto: prospectoData.id,
+          nombre_archivo: `${createdProspectoNombre}.png`,
+          image_base64: firmaBase64, 
+          tipo: 'image/png',
+          fecha_creacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        }),
+      });
+      
+      if (!firmaResponse.ok) {
+        throw new Error(`Error al guardar firma: ${firmaResponse.status}`);
+      }
+      
+      const firmaData = await firmaResponse.json();
+      console.log('Firma guardada:', firmaData);
+    }
 
-                // Éxito - todos los datos guardados
-                setError('');
-                setSuccess(true);
-                resetForm();
+    // 5. Crear relación con contacto principal en tabla intermedia
+    const relacionPrincipalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        id_prospecto: prospectoData.id, 
+        id_contacto_emergencia: contactoData.id
+      }),
+    });
 
+    if (!relacionPrincipalResponse.ok) {
+      throw new Error(`Error al crear relación principal: ${relacionPrincipalResponse.status}`);
+    }
+
+    const relacionPrincipalData = await relacionPrincipalResponse.json();
+    console.log('Relación principal creada:', relacionPrincipalData);
+    createdRelationships.push({ 
+      prospectoId: prospectoData.id, 
+      contactoId: contactoData.id 
+    });
+
+    // 6. Crear relación con contacto opcional si existe
+    if (contactoOpcionalData) {
+      const relacionOpcionalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id_prospecto: prospectoData.id,
+          id_contacto_emergencia: contactoOpcionalData.id
+        }),
+      });
+
+      if (!relacionOpcionalResponse.ok) {
+        console.warn('Error al crear relación opcional');
+      } else {
+        const relacionOpcionalData = await relacionOpcionalResponse.json();
+        console.log('Relación opcional creada:', relacionOpcionalData);
+        createdRelationships.push({ 
+          prospectoId: prospectoData.id, 
+          contactoId: contactoOpcionalData.id 
+        });
+      }
+    }
+
+    // Éxito - todos los datos guardados
+    setError('');
+    resetForm();
+    setSuccess(true);
+    
+    // Retrasar la navegación para que el usuario pueda ver el mensaje
+    timeoutRef.current = setTimeout(() => {
+      navigate('/');
+    }, 4000);
+
+  } catch (error) {
+    console.error('Error completo:', error);
+    setError('Error: ' + error.message);
+    setSuccess(false);
+    
+    // Ejecutar rollback para eliminar todos los registros creados
+    try {
+      await executeRollback(createdProspectoId, createdContactoIds, createdRelationships);
+      console.log('Rollback ejecutado exitosamente');
+    } catch (rollbackError) {
+      console.error('Error durante el rollback:', rollbackError);
+      setError(prevError => prevError + '. Además, hubo un problema al revertir los cambios. Contacte al administrador.');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Función para ejecutar el rollback
+const executeRollback = async (prospectoId, contactoIds, relationships) => {
+  // 1. Eliminar relaciones primero (por restricciones de clave foránea)
+  for (const relationship of relationships) {
+    try {
+      await fetch('http://localhost:5000/api/delete-prospecto-contacto', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id_prospecto: relationship.prospectoId,
+          id_contacto_emergencia: relationship.contactoId
+        }),
+      });
     } catch (error) {
-      console.error('Error completo:', error);
-        setError('Error: ' + error.message);
-        setSuccess(false);
-  }finally {
-      setLoading(false);
+      console.warn('Error eliminando relación:', error);
     }
-  };
+  }
+  // 1. Eliminar firma si fue creada
+  if (prospectoId) {
+    try {
+      await fetch('http://localhost:5000/api/delete-firma', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_prospecto: prospectoId }),
+      });
+    } catch (error) {
+      console.warn('Error eliminando firma:', error);
+    }
+  }
 
-  const handleCloseSnackbar = () => {
+  // 2. Eliminar prospecto si fue creado
+  if (prospectoId) {
+    try {
+      await fetch('http://localhost:5000/api/delete-prospecto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: prospectoId }),
+      });
+    } catch (error) {
+      console.warn('Error eliminando prospecto:', error);
+    }
+  }
+
+  // 3. Eliminar contactos de emergencia
+  for (const contactoId of contactoIds) {
+    try {
+      await fetch('http://localhost:5000/api/delete-contacto-emergencia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_contacto_emergencia: contactoId }),
+      });
+    } catch (error) {
+      console.warn('Error eliminando contacto:', error);
+    }
+  }
+};
+
+   const handleCloseAlert = () => {
     setSuccess(false);
     setError('');
+
+    // Si el usuario cierra manualmente el alert, cancelar la navegación automática
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
   };
+
+  
+  //#endregion
+
+//#region 
+   // Efecto para cargar datos SAT cuando estén disponibles
+  useEffect(() => {
+   if (datosSat) {
+      console.log('Datos SAT recibidos, bloqueando campos...');
+      setFieldsLocked(true);
+      loadSatDataIntoForm(datosSat);
+    } else {
+      setFieldsLocked(false);
+    }
+    if(timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }, [datosSat]);
+
+// Función para cargar datos SAT en el formulario
+  const loadSatDataIntoForm = (datos) => {
+    if (!datos) return;
+
+    console.log('Cargando datos SAT en formulario:', datos);
+    
+    // Datos personales
+    if (datos.nombre) setNombre(datos.nombre);
+    if (datos.apellidoPaterno) setApellidoPaterno(datos.apellidoPaterno);
+    if (datos.apellidoMaterno) setApellidoMaterno(datos.apellidoMaterno);
+    if (datos.curp) setCurp(datos.curp);
+    if (datos.rfc) setRfc(datos.rfc);
+    // if (datos.fechaNacimiento) {
+    //   setFechaNacimiento(formatDateForInput(datos.fechaNacimiento));
+    //}
+    
+    // Domicilio
+    if (datos.domicilio) {
+      const dom = datos.domicilio;
+      if (dom.entidadFederativa) setEstado(dom.entidadFederativa);
+      if (dom.municipio) setMunicipio(dom.municipio);
+      if (dom.colonia) setColonia(dom.colonia);
+      if (dom.nombreVialidad) setCalle(dom.nombreVialidad);
+      if (dom.numeroExterior) setNoExterior(dom.numeroExterior);
+      if (dom.numeroInterior) setNoInterior(dom.numeroInterior);
+      if (dom.codigoPostal) setCp(dom.codigoPostal);
+    }
+  };
+  // Función auxiliar para formatear fecha
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+   // Función para desbloquear campos (opcional)
+  const unlockFields = () => {
+    setFieldsLocked(false);
+  };
+  
   //#endregion
 
   return (
-    <div className='font container'>
-    <h2>Bienvenido</h2> 
-    <p>El uso de estos datos es confidencial y serán tratados conforme a la ley. 
-        Te comprometes a proporcionar información verídica y completa, ya que será utilizada para tu proceso de ingreso y contratación.</p>
+    <div className='container'>
 
 {/* Mostrar loader mientras se carga */}
       {loading && (
@@ -394,29 +649,127 @@ function CollaboratorForm() {
         </Box>
       )}
 
-{/* Mensajes de éxito y error */}
-      <Snackbar 
-        open={success} 
-        autoHideDuration={6000} 
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          ¡Todos los datos guardados exitosamente!
+ {/* Mensajes de éxito y error*/}
+      {success && (
+        <Alert
+          size="lg"
+          color="success"
+          variant="solid"
+          invertedColors
+          startDecorator={
+            <AspectRatio
+              variant="solid"
+              ratio="1"
+              sx={{
+                minWidth: 40,
+                borderRadius: '50%',
+                color: 'white',
+                boxShadow: '0 2px 12px 0 rgb(0 0 0/0.2)',
+              }}
+            >
+              <div>
+                <Check fontSize="medium" />
+              </div>
+            </AspectRatio>
+          }
+          endDecorator={
+            <IconButton
+              variant="plain"
+              sx={{
+                '--IconButton-size': '32px',
+                transform: 'translate(0.5rem, -0.5rem)',
+              }}
+              onClick={handleCloseAlert}
+            >
+              <Close />
+            </IconButton>
+          }
+          sx={{ 
+            alignItems: 'flex-start', 
+            overflow: 'hidden',
+            position: 'fixed',
+            top: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10000,
+            width: '80%',
+            maxWidth: 600
+          }}
+        >
+          <div>
+            <Typography level="title-lg">Éxito</Typography>
+            <Typography level="body-sm">
+              ¡Todos los datos guardados exitosamente!
+            </Typography>
+          </div>
+          <LinearProgress
+            variant="solid"
+            color="success"
+            value={40}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderRadius: 0,
+            }}
+          />
         </Alert>
-      </Snackbar>
+      )}
 
-      <Snackbar 
-        open={!!error} 
-        autoHideDuration={6000} 
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          {error}
+      {error && (
+        <Alert
+          variant="soft"
+          color="danger"
+          invertedColors
+          startDecorator={
+              <WarningIcon style={{fontSize: 'x-large'}} />
+          }
+          endDecorator={
+            <IconButton
+              variant="plain"
+              sx={{
+                '--IconButton-size': '32px',
+                transform: 'translate(0.5rem, -0.5rem)',
+              }}
+              onClick={handleCloseAlert}
+            >
+              <Close />
+            </IconButton>
+          }
+          sx={{ 
+            alignItems: 'flex-start', 
+            gap: '1rem',
+            position: 'fixed',
+            top: 20,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10000,
+            width: '80%',
+            maxWidth: 600
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Typography style={{color:'#7d1212', fontWeight: 'bold', fontSize: 'medium'}} level="title-md">Error</Typography>
+            <Typography style={{color:'#c41c1c', fontWeight:'lighter'}} level="body-md">
+              {error}
+            </Typography>
+              <LinearProgress
+            variant="solid"
+            color="success"
+            value={40}
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderRadius: 0,
+            }}
+          />
+          </Box>
         </Alert>
-      </Snackbar>
-
+        
+      )}
     <Card className='card size'>
       <h4>Formulario de Registro</h4>
       <div>
@@ -427,7 +780,8 @@ function CollaboratorForm() {
           variant="standard" 
           size="small"
           value={nombre}
-            onChange={(e) => handleTextOnly(setNombre, 35)(e)}
+          disabled={fieldsLocked}
+            onChange={(e) => handleTextSat(setNombre, 35)(e)}
           inputProps={{maxLength:35}}
           required={true}/>
         <TextField 
@@ -437,7 +791,8 @@ function CollaboratorForm() {
           variant="standard" 
           size="small"
           value={apellidoPaterno}
-          onChange={(e) => handleTextOnly(setApellidoPaterno, 30)(e)}
+          disabled={fieldsLocked}
+          onChange={(e) => handleTextSat(setApellidoPaterno, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
         <TextField 
@@ -446,8 +801,9 @@ function CollaboratorForm() {
           label="Apellido Materno" 
           variant="standard" 
           size="small"
+          disabled={fieldsLocked}
           value={apellidoMaterno}
-          onChange={(e) => handleTextOnly(setApellidoMaterno, 30)(e)}
+          onChange={(e) => handleTextSat(setApellidoMaterno, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
       </div>
@@ -462,7 +818,20 @@ function CollaboratorForm() {
         InputLabelProps={{ shrink: true }} 
         size='small' 
         required={true} />
-         <FormControl className='select-sexo' variant="standard" size='small' required={true}>
+          <div className='display'>
+          <TextField 
+            id="standard-basic" 
+            className='textfield' 
+            label="Estado de nacimiento" 
+            variant="standard" 
+            size='small' 
+            value={estadoNacimiento}
+            onChange={(e) => handleTextOnly(setEstadoNacimiento, 30)(e)}
+            inputProps={{ maxLength: 30 }}
+            required={true}
+          />
+          </div>
+       <FormControl className='select-sexo' variant="standard" size='small' required={true}>
            <InputLabel className='' id="select-sexo" size='small'>Sexo</InputLabel>
             <Select 
               id="demo-simple-select-standard"
@@ -479,20 +848,62 @@ function CollaboratorForm() {
               <MenuItem value="Otro">Otro</MenuItem>
             </Select>
           </FormControl>
-          <div className='display'>
+      </div>
+      <div >
+        <TextField 
+          id="standard-basic" 
+          className='textfield' 
+          label="CURP" 
+          variant="standard" 
+          size='small'  
+          value={curp}
+          disabled={fieldsLocked}
+          onChange={(e) => handleCurpUpper(e)}
+          inputProps={{ maxLength: 18 }}
+          required={true}
+        />        
+         <TextField 
+          id="standard-basic" 
+          className='textfield' 
+          label="RFC" 
+          variant="standard"
+          value={rfc}
+          disabled={fieldsLocked}
+          onChange={(e) => handleRfcUpper(e)}
+          inputProps={{ maxLength: 13 }}
+          required={true}
+        />
+        <TextField 
+          id="standard-basic" 
+          className='textfield' 
+          label="NSS" 
+          variant="standard"
+          value={nss}
+          type='number'
+          onChange={(e) => handleNumberOnly(setNss, 11)(e)}
+          inputProps={{ maxLength: 11 }}
+          required={true}/>
+      </div>
+      <div>
           <TextField 
-            id="standard-basic" 
-            className='textfield' 
-            label="Estado de nacimiento" 
-            variant="standard" 
-            size='small' 
-            value={estadoNacimiento}
-            onChange={(e) => handleTextOnly(setEstadoNacimiento, 30)(e)}
-            inputProps={{ maxLength: 30 }}
-            required={true}
-          />
-          </div>
-      
+          id="standard-basic" 
+          className='textfield-rfc' 
+          label="UMF" 
+          variant="standard"
+          value={umf}
+          onChange={(e) => handleTextNumer(setUmf, 20)(e)}
+          inputProps={{ maxLength: 20 }}
+          required={true}/>
+          <TextField 
+          id="standard-basic" 
+          className='textfield-rfc' 
+          label="No. de Cuenta" 
+          variant="standard"
+          type='number'
+          value={noCuenta}
+          onChange={(e) => handleNumberOnly(setNoCuenta, 25)(e)}
+          inputProps={{ maxLength: 25 }}
+          required={true}/>
       </div>
       <div>
          <FormControl className='select' variant="standard" size='small' required={true}>
@@ -537,82 +948,7 @@ function CollaboratorForm() {
           </div>
          
 
-      </div>
-      <div >
-        <TextField 
-          id="standard-basic" 
-          className='textfield-rfc' 
-          label="CURP" 
-          variant="standard" 
-          size='small'  
-          value={curp}
-          onChange={(e) => handleCurpUpper(e)}
-          inputProps={{ maxLength: 18 }}
-          required={true}
-        />
-        <div>
-        <Button 
-          onClick={() => window.open('https://www.gob.mx/curp/')} 
-          className='btn-consultar'
-          variant="contained"
-          size="small"
-          color='inherit'
-        >Consultar CURP</Button>
-        </div>
-        
-      </div>
-      <div>
-        <TextField 
-          id="standard-basic" 
-          className='textfield-rfc' 
-          label="RFC" 
-          variant="standard"
-          value={rfc}
-          onChange={(e) => handleRfcUpper(e)}
-          inputProps={{ maxLength: 13 }}
-          required={true}
-        />
-        <div>
-          <Button 
-          onClick={() => window.open('https://wwwmat.sat.gob.mx/aplicacion/31274/consulta-tu-clave-de-rfc-mediante-curp')} 
-          variant="contained"
-          className='btn-consultar'
-          size="small"
-          color='inherit'
-          >Consultar RFC</Button>
-        </div>
-      </div>
-      <div>
-        <TextField 
-          id="standard-basic" 
-          className='textfield' 
-          label="NSS" 
-          variant="standard"
-          value={nss}
-          type='number'
-          onChange={(e) => handleNumberOnly(setNss, 11)(e)}
-          inputProps={{ maxLength: 11 }}
-          required={true}/>
-          <TextField 
-          id="standard-basic" 
-          className='textfield' 
-          label="UMF" 
-          variant="standard"
-          value={umf}
-          onChange={(e) => handleTextNumer(setUmf, 20)(e)}
-          inputProps={{ maxLength: 20 }}
-          required={true}/>
-          <TextField 
-          id="standard-basic" 
-          className='textfield' 
-          label="No. de Cuenta" 
-          variant="standard"
-          type='number'
-          value={noCuenta}
-          onChange={(e) => handleNumberOnly(setNoCuenta, 25)(e)}
-          inputProps={{ maxLength: 25 }}
-          required={true}/>
-      </div>
+      </div>  
       <div>
          <TextField 
           placeholder='ejemplo@dominio.com'
@@ -629,17 +965,6 @@ function CollaboratorForm() {
           required={true}
         />
         <TextField 
-          id="TelefonoCasa" 
-          className='textfield' 
-          label="Teléfono Casa" 
-          variant="standard" 
-          size="small"
-          type='number'
-          value={telefonoCasa}
-          onChange={(e) => handleNumberOnly(setTelefonoCasa, 10)(e)}
-          inputProps={{maxLength:10}}
-          required={false}/>
-        <TextField 
           id="TelefonoMovil" 
           className='textfield' 
           label="Teléfono Móvil" 
@@ -650,6 +975,17 @@ function CollaboratorForm() {
           onChange={(e) => handleNumberOnly(setTelefonoCelular, 10)(e)}
           inputProps={{maxLength:10}}
           required={true}/>
+          <TextField 
+          id="TelefonoCasa" 
+          className='textfield' 
+          label="Teléfono Casa" 
+          variant="standard" 
+          size="small"
+          type='number'
+          value={telefonoCasa}
+          onChange={(e) => handleNumberOnly(setTelefonoCasa, 10)(e)}
+          inputProps={{maxLength:10}}
+          required={false}/>
       </div>
 
       <Divider style={{ marginTop: '2.5rem', marginBottom: '2.5rem' }} />
@@ -662,6 +998,7 @@ function CollaboratorForm() {
           variant="standard"
           size="small"
           value={calle}
+          disabled={fieldsLocked}
           onChange={(e) => handleTextCapitalize(setCalle, 50)(e)}
           inputProps={{maxLength:20}}
           required={true}
@@ -672,6 +1009,7 @@ function CollaboratorForm() {
           label="Colonia"
           variant="standard"
           size="small"
+          disabled={fieldsLocked}
           value={colonia}
           onChange={(e) => handleTextCapitalize(setColonia, 50)(e)}
           inputProps={{maxLength:20}}
@@ -683,8 +1021,9 @@ function CollaboratorForm() {
           label="Número Exterior"
           variant="standard"
           size="small"
+          disabled={fieldsLocked}
           value={noExterior}
-          onChange={(e) => handleNumber(setNoExterior, 5)(e)}
+          onChange={(e) => handleNumberNE(setNoExterior, 5)(e)}
           inputProps={{maxLength:5}}
           required={true}
         />
@@ -695,7 +1034,7 @@ function CollaboratorForm() {
           variant="standard"
           size="small"
           value={noInterior}
-          onChange={(e) => handleNumber(setNoInterior, 5)(e)}
+          onChange={(e) => handleNumeroInterior(setNoInterior, 5)(e)}
           inputProps={{maxLength:5}}
           required={false}
         />
@@ -707,9 +1046,10 @@ function CollaboratorForm() {
           label="Código Postal"
           variant="standard"
           size="small"
+          disabled={fieldsLocked}
           value={cp}
           type='number'
-          onChange={(e) => handleNumberOnly(setCp, 5)(e)}
+          onChange={(e) => handleNumberCP(setCp, 5)(e)}
           inputProps={{maxLength:5}}
           required={true}
         />
@@ -720,7 +1060,7 @@ function CollaboratorForm() {
           variant="standard"
           size="small"
           value={localidad}
-          onChange={(e) => handleTextCapitalize(setLocalidad, 40)(e)}
+          onChange={(e) => handleTextCapitalizeLocalidad(setLocalidad, 40)(e)}
           inputProps={{maxLength:40}}
           required={true}/>
           <TextField
@@ -730,6 +1070,7 @@ function CollaboratorForm() {
           variant="standard"
           size="small"
           value={municipio}
+          disabled={fieldsLocked}
           onChange={(e) => handleTextCapitalize(setMunicipio, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
@@ -740,6 +1081,7 @@ function CollaboratorForm() {
           variant="standard"
           size="small"
           value={estado}
+          disabled={fieldsLocked}
           onChange={(e) => handleTextOnly(setEstado, 30)(e)}
           inputProps={{maxLength:30}}
           required={true}/>
@@ -845,17 +1187,28 @@ function CollaboratorForm() {
 
       <h4>Datos médicos</h4>
       <div>
-        <TextField
-          id="TipoSangre"
-          className='textfield'
-          label="Tipo de Sangre"
-          variant="standard"
-          size="small"
-          value={tipoSangre}
-          onChange={(e) => handleTextUpper(setTipoSangre, 3)(e)}
-          inputProps={{maxLength:3}}
-          required={true}
-        />
+         <FormControl className='select-sexo' variant="standard" size='small' required={false}>
+           <InputLabel className='select-sexo' id="select-parentescoO" size='small'>Tipo de Sangre</InputLabel>
+            <Select 
+              id="demo-simple-select-standard"
+              label="Tipo de Sangre"
+              value={tipoSangre}
+              onChange={(e) => handleChangeTipoSangre(e)}
+              style={{paddingTop:'0px !important'}}
+            >
+              <MenuItem value="">
+                <em>Seleccione</em>
+              </MenuItem>
+              <MenuItem value="A+">A+</MenuItem>
+              <MenuItem value="A-">A-</MenuItem>
+              <MenuItem value="B+">B+</MenuItem>
+              <MenuItem value="B-">B-</MenuItem>
+              <MenuItem value="O+">O+</MenuItem>
+              <MenuItem value="O-">O-</MenuItem>
+              <MenuItem value="AB+">AB+</MenuItem>
+              <MenuItem value="AB-">AB-</MenuItem>
+            </Select>
+          </FormControl>
         <TextField
           id="Alergias"
           className='textfield'
@@ -904,7 +1257,7 @@ function CollaboratorForm() {
           inputProps={{maxLength:80}}
           required={true}
         />
-        <div style={{display:'flex', alignItems:'center'}}>
+        <div className='textfield-radiobutton'>
           <label className='label'>¿Tiene hijos? *</label>
         </div>
      <FormControl style={{paddingTop:0}}> 
@@ -945,47 +1298,64 @@ function CollaboratorForm() {
 
         <h4>Adeudos</h4>
        <div className='div-adeudos'>
-      <FormControl className='radio-group-container'>
-      <FormLabel id="demo-controlled-radio-buttons-group">Infonavit *</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
-        value={infonavit}
-        onChange={(e) => handleChangeInfonavit(e)}
-        required={true}
-      >
-        <FormControlLabel value={true} control={<Radio />} label="Sí" />
-        <FormControlLabel value={false} control={<Radio />} label="No" />
-      </RadioGroup>
-    </FormControl>
-    <FormControl>
-      <FormLabel id="demo-controlled-radio-buttons-group">Fonacot *</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
-        value={fonacot}
-        onChange={(e) => handleChangeFonacot(e)}
-        required={true}
-      >
-        <FormControlLabel value={true} control={<Radio />} label="Sí" />
-        <FormControlLabel value={false} control={<Radio />} label="No" />
-      </RadioGroup>
-    </FormControl>
-    <FormControl>
-      <FormLabel id="demo-controlled-radio-buttons-group">Pensión Alimenticia *</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
+     <TextField
+          id="Infonavit"
+          className='textfield-padres'
+          label="Infonavit"
+          variant="standard"
+          size="small"
+          value={infonavit}
+          onChange={(e) => handleNumberInfonavit(setInfonavit, 10)(e)}
+          inputProps={{maxLength:10, minLength:10}}
+          required={false}
+        />
+          <TextField
+          id="Fonacot"
+          className='textfield-padres'
+          label="Fonacot"
+          variant="standard"
+          size="small"
+          value={fonacot}
+          onChange={(e) => handleNumberInfonavit(setFonacot, 6)(e)}
+          inputProps={{maxLength:6, minLength:6}}
+          required={false}
+        />
+        <div className='textfield-radiobutton'>
+          <label className='label'>Pensión Alimenticia *</label>
+        </div>
+        <FormControl style={{paddingTop:0}}> 
+     
+        <RadioGroup className='radio-group-container'
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        name="row-radio-buttons-group"
         value={pension}
         onChange={(e) => handleChangePension(e)}
         required={true}
       >
         <FormControlLabel value={true} control={<Radio />} label="Sí" />
         <FormControlLabel value={false} control={<Radio />} label="No" />
-      </RadioGroup>
-    </FormControl>
 
-       </div>
+      </RadioGroup>
+      </FormControl>
+      </div>
+
+       <Divider style={{ marginTop: '2rem', marginBottom: '2rem' }} />
+      {/* Firma digital */}
+      <div style={{display: 'flex', justifyContent: 'center', paddingBottom:'0.5rem', paddingTop: '0px'}}>
+        <Button type='button' color='inherit' variant="contained" onClick={resetSignature}>Limpiar Firma</Button>
+      </div>
+      
+      <div style={{ border: '1px solid rgb(170, 170, 170)', borderRadius:'1rem', width: 'max-content', paddingTop: 'unset', display: 'flex', justifySelf: 'center' }}>
+        <SignatureCanvas ref={signatureRef} canvasProps={{ width: 320, height: 100, className: 'sigCanvas' }} />
+      </div>
+      <div className='div-firma'>
+          <h4>Firma Digital</h4>
+      </div>
+      <div className='div-firma'>
+          <p>Rectifico que la información proporcionada es verídica</p> 
+      </div>
+      {/* {firmaBase64 && <img src={firmaBase64} alt="Firma" width={160} />} */}
     </Card>
         <div className='btn-save'>
         <Button 
@@ -1005,15 +1375,11 @@ function CollaboratorForm() {
       <button onClick={capturePhoto}>Tomar Foto</button><br />
       {photo && <img src={photo} alt="Foto capturada" width={160} />} */}
 
-      {/* Firma digital */}
-      {/* <h3>Firma Digital</h3>
-      <SignatureCanvas ref={signatureRef} canvasProps={{ width: 320, height: 100, className: 'sigCanvas' }} />
-      <button onClick={saveSignature}>Guardar Firma</button><br />
-      {signature && <img src={signature} alt="Firma" width={160} />} */}
+     
 
     </div>
   );
 }
 
-
+export const LoadSatDataIntoForm = CollaboratorForm;
 export default CollaboratorForm;
