@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Button, Alert } from '@mui/material';
 import CollaboratorForm, { LoadSatDataIntoForm } from './CollaboratorForm';
 import './templates/Home.css';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import SearchIcon from '@mui/icons-material/Search';
 
 function Home() {
     const [showScanner, setShowScanner] = useState(false);
@@ -53,7 +55,7 @@ function Home() {
                     color="primary"
                     onClick={toggleScanner}
                     style={{ marginRight: '10px', marginBottom:'1rem' }}
-                    startIcon={showScanner ? '📷' : '🔍'}
+                    startIcon={showScanner ? <CameraAltIcon /> : <SearchIcon />}
                 >
                     {showScanner ? 'Ocultar Escáner' : 'Escanear Constancia Fiscal'}
                 </Button>
