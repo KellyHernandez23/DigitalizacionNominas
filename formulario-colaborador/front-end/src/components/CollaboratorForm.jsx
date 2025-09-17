@@ -23,6 +23,7 @@ function CollaboratorForm({ datosSat}) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [fieldsLocked, setFieldsLocked] = useState(false);
+  const [fieldsLockedCol, setFieldsLockedCol] = useState(false);
   const navigate = useNavigate();
   const timeoutRef = useRef(null);
 
@@ -257,6 +258,15 @@ function CollaboratorForm({ datosSat}) {
   const handleTextCapitalize = (setter, max) => e => {
      if (fieldsLocked) return;
     let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
+    value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
+      (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
+    );
+    setter(value);
+  };
+
+  const handleTextCapitalizeColonia = (setter, max) => e => {
+    if (setFieldsLockedCol) return;
+   let value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚ0-9\s]/g, '').slice(0, max);
     value = value.replace(/\b([a-zA-ZáéíóúÁÉÍÓÚ])([a-zA-ZáéíóúÁÉÍÓÚ]*)/g, 
       (match, first, rest) => first.toUpperCase() + rest.toLowerCase()
     );
@@ -571,6 +581,12 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
   useEffect(() => {
    if (datosSat) {
       console.log('Datos SAT recibidos, bloqueando campos...');
+      if(datosSat.domicilio.colonia === 'OTRA NO ESPECIFICADA EN EL CATALOGO'){
+        setFieldsLockedCol(false);
+      }
+      else{
+        setFieldsLockedCol(true);
+      }
       setFieldsLocked(true);
       loadSatDataIntoForm(datosSat);
     } else {
@@ -1009,9 +1025,9 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
           label="Colonia"
           variant="standard"
           size="small"
-          disabled={fieldsLocked}
+          disabled={fieldsLockedCol}
           value={colonia}
-          onChange={(e) => handleTextCapitalize(setColonia, 50)(e)}
+          onChange={(e) => handleTextCapitalizeColonia(setColonia, 50)(e)}
           inputProps={{maxLength:20}}
           required={true}
         />
@@ -1353,7 +1369,7 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
           <h4>Firma Digital</h4>
       </div>
       <div className='div-firma'>
-          <p>Rectifico que la información proporcionada es verídica</p> 
+          <p>Rectifico que la información proporcionada es verídica.</p> 
       </div>
       {/* {firmaBase64 && <img src={firmaBase64} alt="Firma" width={160} />} */}
     </Card>
