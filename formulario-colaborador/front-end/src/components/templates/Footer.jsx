@@ -1,3 +1,5 @@
+import CopyrightIcon from '@mui/icons-material/Copyright';
+
 function Footer() {
   return (
     <footer className="footer" style={{
@@ -10,7 +12,7 @@ function Footer() {
     }}>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <p style={{ fontSize:'0.875rem', color:'#7C7C7C'}}>Todos los derechos reservados</p>
+          <p style={{ fontSize:'0.875rem', color:'#7C7C7C'}}>Todos los derechos reservados | 2025 <CopyrightIcon style={{ fontSize:'0.875rem', verticalAlign: 'middle' }} /></p>
         </div>
       </div>
     </footer>
