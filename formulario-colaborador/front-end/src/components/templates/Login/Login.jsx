@@ -18,6 +18,7 @@ import LogoAlze from '../../../assets/img/logo_alze.png';
 import { useNavigate } from 'react-router-dom';
 import '../Login/Login.css'
 import InfoIcon from '@mui/icons-material/Info';
+import { EmpleadosService} from '../../../services/api';
 
 
 const Login = () => {
@@ -33,22 +34,14 @@ const Login = () => {
     setId('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/GetRFC', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ rfc }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      const data = await EmpleadosService.getByRFC(rfc);
+      console.log('Respuesta del servicio:', data);
+      if(data.success){
         setError('');
         console.log('Empleado:', data.user);
         setId(data.user.id);
         setOpen(true)
-      } 
+      }
       else{
         setOpen(true)
       }

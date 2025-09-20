@@ -12,6 +12,11 @@ import './templates/CollaboratorForm.css';
 import { useNavigate } from 'react-router-dom';
 import { Check, Close} from '@mui/icons-material';
 import WarningIcon from '@mui/icons-material/Warning';
+import { 
+  ProspectosService, 
+  FirmasService, 
+  ContactosEmergenciaService 
+} from '../services/api';
 
 function CollaboratorForm({ datosSat}) {
   //#region Estados
@@ -123,16 +128,7 @@ function CollaboratorForm({ datosSat}) {
     setSignature(null);
   };
   //#endregion
-
-  //#region Handlers
-  // const handleChangeInfonavit = (event) => {
-  //   setInfonavit(event.target.value);
-  // };
-  
-  // const handleChangeFonacot = (event) => {
-  //   setFonacot(event.target.value);
-  // };
-  
+ 
 
   const handleChangePension = (event) => {
     setPension(event.target.value);
@@ -308,7 +304,7 @@ function CollaboratorForm({ datosSat}) {
     }
   }
 
-  const handleSave = async (e) => {
+ const handleSave = async (e) => {
   e.preventDefault();
   setError('');
   setLoading(true);
@@ -319,154 +315,122 @@ function CollaboratorForm({ datosSat}) {
   let createdProspectoNombre = '';
   let createdContactoIds = [];
   let createdRelationships = [];
-  // const sigData = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
-  // setSignature(sigData);
 
   try {
     // 1. Primero guardar el contacto de emergencia principal
-    const contactoResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        nombre_contacto: nombreEmergencia,
-        telefono: telefonoContactoEmergencia,
-        parentesco: parentesco
-      }),
+    const contactoData = await ContactosEmergenciaService.create({
+      nombre_contacto: nombreEmergencia,
+      telefono: telefonoContactoEmergencia,
+      parentesco: parentesco
     });
 
-    if (!contactoResponse.ok) {
-      throw new Error(`Error al guardar contacto: ${contactoResponse.status}`);
-    }
-
-    const contactoData = await contactoResponse.json();
     console.log('Contacto principal guardado:', contactoData);
     createdContactoIds.push(contactoData.id);
 
     // 2. Guardar contacto opcional si existe
     let contactoOpcionalData = null;
     if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
-      const contactoOpcionalResponse = await fetch('http://localhost:5000/api/add-contacto-emergencia', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
+      try {
+        contactoOpcionalData = await ContactosEmergenciaService.create({
           nombre_contacto: nombreEmergenciaO,
           telefono: telefonoContactoEmergenciaO,
           parentesco: parentescoO
-        }),
-      });
-      
-      if (!contactoOpcionalResponse.ok) {
-        console.warn('Error al guardar contacto opcional');
-      } else {
-        contactoOpcionalData = await contactoOpcionalResponse.json();
+        });
         console.log('Contacto opcional guardado:', contactoOpcionalData);
         createdContactoIds.push(contactoOpcionalData.id);
+      } catch (error) {
+        console.warn('Error al guardar contacto opcional:', error);
       }
     }
 
     // 3. Guardar el prospecto
-    const prospectoResponse = await fetch('http://localhost:5000/api/add-prospecto', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        nombre_prospecto: nombre, apellido_paterno_prospecto: apellidoPaterno, apellido_materno_prospecto: apellidoMaterno, 
-        fecha_nacimiento: fechaNacimiento, sexo: sexo, lugar_nacimiento: estadoNacimiento, 
-        estado_civil: estadoCivil, curp: curp, rfc: rfc, nss: nss, umf: umf, numero_cuenta: noCuenta, 
-        calle: calle, numero_exterior: noExterior, numero_interior: noInterior, colonia: colonia, 
-        codigo_postal: cp, localidad: localidad, municipio: municipio, estado: estado, numero_celular: telefonoCelular, 
-        telefono_casa: telefonoCasa, correo_cfdi: email, escolaridad: escolaridad, hijos: cantidadHijos, 
-        nombre_padre: nombrePadre, nombre_madre: nombreMadre, tipo_sangre: tipoSangre, alergias: alergias, 
-        procedimientos_medicos: procedimientosMedicos, 
-        infonavit: infonavit, fonacot: fonacot, pension_alimenticia: pension, 
-        id_detalles_puesto: null
-      }),
+    const prospectoData = await ProspectosService.create({
+      nombre_prospecto: nombre,
+      apellido_paterno_prospecto: apellidoPaterno,
+      apellido_materno_prospecto: apellidoMaterno,
+      fecha_nacimiento: fechaNacimiento,
+      sexo: sexo,
+      lugar_nacimiento: estadoNacimiento,
+      estado_civil: estadoCivil,
+      curp: curp,
+      rfc: rfc,
+      nss: nss,
+      umf: umf,
+      numero_cuenta: noCuenta,
+      calle: calle,
+      numero_exterior: noExterior,
+      numero_interior: noInterior,
+      colonia: colonia,
+      codigo_postal: cp,
+      localidad: localidad,
+      municipio: municipio,
+      estado: estado,
+      numero_celular: telefonoCelular,
+      telefono_casa: telefonoCasa,
+      correo_cfdi: email,
+      escolaridad: escolaridad,
+      hijos: cantidadHijos,
+      nombre_padre: nombrePadre,
+      nombre_madre: nombreMadre,
+      tipo_sangre: tipoSangre,
+      alergias: alergias,
+      procedimientos_medicos: procedimientosMedicos,
+      infonavit: infonavit,
+      fonacot: fonacot,
+      pension_alimenticia: pension,
+      id_detalles_puesto: null
     });
 
-    if (!prospectoResponse.ok) {
-      throw new Error(`Error al guardar prospecto: ${prospectoResponse.status}`);
-    }
-
-    const prospectoData = await prospectoResponse.json();
     console.log('Prospecto guardado:', prospectoData);
     createdProspectoId = prospectoData.id;
-    createdProspectoNombre = prospectoData.nombre+'_'+apellidoPaterno+'_'+apellidoMaterno;
+    createdProspectoNombre = `${prospectoData.nombre}_${apellidoPaterno}_${apellidoMaterno}`;
 
-
-    //4. Insertar firma
-  if (firmaBase64) {
-      const firmaResponse = await fetch('http://localhost:5000/api/add-firma', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    // 4. Insertar firma si existe
+    if (firmaBase64) {
+      try {
+        const firmaData = await FirmasService.upload({
           id_prospecto: prospectoData.id,
           nombre_archivo: `${createdProspectoNombre}.png`,
-          image_base64: firmaBase64, 
+          image_base64: firmaBase64,
           tipo: 'image/png',
           fecha_creacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
-        }),
-      });
-      
-      if (!firmaResponse.ok) {
-        throw new Error(`Error al guardar firma: ${firmaResponse.status}`);
+        });
+        console.log('Firma guardada:', firmaData);
+      } catch (firmaError) {
+        console.warn('Error al guardar firma:', firmaError);
+        // No hacemos throw aquí para no interrumpir el flujo principal
       }
-      
-      const firmaData = await firmaResponse.json();
-      console.log('Firma guardada:', firmaData);
     }
 
-    // 5. Crear relación con contacto principal en tabla intermedia
-    const relacionPrincipalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        id_prospecto: prospectoData.id, 
+    // 5. Crear relación con contacto principal (usando el servicio de prospectos)
+    try {
+      const relacionPrincipalData = await ProspectosService.addContacto({
+        id_prospecto: prospectoData.id,
         id_contacto_emergencia: contactoData.id
-      }),
-    });
-
-    if (!relacionPrincipalResponse.ok) {
-      throw new Error(`Error al crear relación principal: ${relacionPrincipalResponse.status}`);
+      });
+      console.log('Relación principal creada:', relacionPrincipalData);
+      createdRelationships.push({
+        prospectoId: prospectoData.id,
+        contactoId: contactoData.id
+      });
+    } catch (relacionError) {
+      console.warn('Error al crear relación principal:', relacionError);
     }
-
-    const relacionPrincipalData = await relacionPrincipalResponse.json();
-    console.log('Relación principal creada:', relacionPrincipalData);
-    createdRelationships.push({ 
-      prospectoId: prospectoData.id, 
-      contactoId: contactoData.id 
-    });
 
     // 6. Crear relación con contacto opcional si existe
     if (contactoOpcionalData) {
-      const relacionOpcionalResponse = await fetch('http://localhost:5000/api/add-prospecto-contacto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
+      try {
+        const relacionOpcionalData = await ProspectosService.addContacto({
           id_prospecto: prospectoData.id,
           id_contacto_emergencia: contactoOpcionalData.id
-        }),
-      });
-
-      if (!relacionOpcionalResponse.ok) {
-        console.warn('Error al crear relación opcional');
-      } else {
-        const relacionOpcionalData = await relacionOpcionalResponse.json();
-        console.log('Relación opcional creada:', relacionOpcionalData);
-        createdRelationships.push({ 
-          prospectoId: prospectoData.id, 
-          contactoId: contactoOpcionalData.id 
         });
+        console.log('Relación opcional creada:', relacionOpcionalData);
+        createdRelationships.push({
+          prospectoId: prospectoData.id,
+          contactoId: contactoOpcionalData.id
+        });
+      } catch (relacionError) {
+        console.warn('Error al crear relación opcional:', relacionError);
       }
     }
 
@@ -474,7 +438,7 @@ function CollaboratorForm({ datosSat}) {
     setError('');
     resetForm();
     setSuccess(true);
-    
+
     // Retrasar la navegación para que el usuario pueda ver el mensaje
     timeoutRef.current = setTimeout(() => {
       navigate('/');
@@ -484,7 +448,7 @@ function CollaboratorForm({ datosSat}) {
     console.error('Error completo:', error);
     setError('Error: ' + error.message);
     setSuccess(false);
-    
+
     // Ejecutar rollback para eliminar todos los registros creados
     try {
       await executeRollback(createdProspectoId, createdContactoIds, createdRelationships);
@@ -500,66 +464,36 @@ function CollaboratorForm({ datosSat}) {
 
 // Función para ejecutar el rollback
 const executeRollback = async (prospectoId, contactoIds, relationships) => {
-  // 1. Eliminar relaciones primero (por restricciones de clave foránea)
-  for (const relationship of relationships) {
-    try {
-      await fetch('http://localhost:5000/api/delete-prospecto-contacto', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          id_prospecto: relationship.prospectoId,
-          id_contacto_emergencia: relationship.contactoId
-        }),
-      });
-    } catch (error) {
-      console.warn('Error eliminando relación:', error);
+  try {
+    // 1. Eliminar firma si fue creada
+    if (prospectoId) {
+      try {
+        await FirmasService.delete(prospectoId);
+      } catch (error) {
+        console.warn('Error eliminando firma:', error);
+      }
     }
-  }
-  // 1. Eliminar firma si fue creada
-  if (prospectoId) {
-    try {
-      await fetch('http://localhost:5000/api/delete-firma', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id_prospecto: prospectoId }),
-      });
-    } catch (error) {
-      console.warn('Error eliminando firma:', error);
-    }
-  }
 
-  // 2. Eliminar prospecto si fue creado
-  if (prospectoId) {
-    try {
-      await fetch('http://localhost:5000/api/delete-prospecto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: prospectoId }),
-      });
-    } catch (error) {
-      console.warn('Error eliminando prospecto:', error);
+    // 2. Eliminar prospecto si fue creado
+    if (prospectoId) {
+      try {
+        await ProspectosService.delete(prospectoId);
+      } catch (error) {
+        console.warn('Error eliminando prospecto:', error);
+      }
     }
-  }
 
-  // 3. Eliminar contactos de emergencia
-  for (const contactoId of contactoIds) {
-    try {
-      await fetch('http://localhost:5000/api/delete-contacto-emergencia', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id_contacto_emergencia: contactoId }),
-      });
-    } catch (error) {
-      console.warn('Error eliminando contacto:', error);
+    // 3. Eliminar contactos de emergencia
+    for (const contactoId of contactoIds) {
+      try {
+        await ContactosEmergenciaService.delete(contactoId);
+      } catch (error) {
+        console.warn('Error eliminando contacto:', error);
+      }
     }
+  } catch (error) {
+    console.error('Error en rollback:', error);
+    throw error;
   }
 };
 
