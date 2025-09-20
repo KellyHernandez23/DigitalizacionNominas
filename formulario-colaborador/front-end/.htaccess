@@ -19,10 +19,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 
-# API routes
-RewriteRule ^api/(.*)$ api/$1 [L]
-
 # Compresión GZIP
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/css application/javascript
-</IfModule>
+</IfModule> 

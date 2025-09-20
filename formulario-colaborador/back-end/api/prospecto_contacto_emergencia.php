@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -15,10 +16,10 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-        if (isset($data['id_prospecto']) && !isset($data['image_base64'])) {
-            handleDeleteFirma($db, $data);
-        } else {
-            handleAddFirma($db, $data);
+        if (isset($data['id_prospecto']) && isset($data['id_contacto_emergencia'])) {
+            handleAddProspectoContacto($db, $data);
+        } else if (isset($data['id_prospecto']) ) {
+            handleDeleteProspectoContacto($db, $data);
         }
         break;
         
@@ -28,30 +29,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 }
 
-function handleAddFirma($db, $data) {
-    if (!isset($data['image_base64'])) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Datos de imagen requeridos']);
-        return;
-    }
-
-    // Convertir base64 a binario
-    $imageData = base64_decode($data['image_base64']);
-    if ($imageData === false) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Formato base64 inválido']);
-        return;
-    }
-
-    $query = "INSERT INTO firma_prospecto (id_prospecto, nombre_archivo, image_blob, tipo, fecha_creacion) 
-              VALUES (?, ?, ?, ?, ?)";
-    
+function handleAddProspectoContacto($db, $data) {
+    $query = "INSERT INTO prospecto_contacto_emergencia (id_prospecto, id_contacto_emergencia) VALUES (?, ?)";
     $values = [
         $data['id_prospecto'] ?? null,
-        $data['nombre_archivo'] ?? 'firma.png',
-        $imageData,
-        $data['tipo'] ?? 'image/png',
-        date('Y-m-d H:i:s')
+        $data['id_contacto_emergencia'] ?? null
     ];
 
     try {
@@ -60,8 +42,7 @@ function handleAddFirma($db, $data) {
         
         echo json_encode([
             'success' => true,
-            'message' => 'Firma agregada exitosamente',
-            'id' => $db->lastInsertId()
+            'message' => 'Relación prospecto-contacto agregada exitosamente'
         ]);
     } catch (PDOException $e) {
         http_response_code(500);
@@ -72,20 +53,30 @@ function handleAddFirma($db, $data) {
     }
 }
 
-function handleDeleteFirma($db, $data) {
-    $query = "DELETE FROM firma_prospecto WHERE id_prospecto = ?";
-    
+function handleDeleteProspectoContacto($db, $data) {
+    if (!isset($data['id_prospecto'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID de prospecto es requerido']);
+        return;
+    }
+
+    $query = "DELETE FROM prospecto_contacto_emergencia WHERE id_prospecto = ? ";
+    $values = [
+        $data['id_prospecto']
+    ];
+
     try {
         $stmt = $db->prepare($query);
-        $stmt->execute([$data['id_prospecto']]);
+        $stmt->execute($values);
         
         echo json_encode([
             'success' => true,
-            'message' => 'Firma eliminada exitosamente'
+            'message' => 'Relación prospecto-contacto eliminada exitosamente'
         ]);
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode([
+            'success' => false,
             'error' => 'Error interno del servidor: ' . $e->getMessage()
         ]);
     }

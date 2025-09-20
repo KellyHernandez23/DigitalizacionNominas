@@ -15,7 +15,8 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { 
   ProspectosService, 
   FirmasService, 
-  ContactosEmergenciaService 
+  ContactosEmergenciaService,
+  ProspectoContactoEmergenciaService
 } from '../services/api';
 
 function CollaboratorForm({ datosSat}) {
@@ -318,29 +319,39 @@ function CollaboratorForm({ datosSat}) {
 
   try {
     // 1. Primero guardar el contacto de emergencia principal
-    const contactoData = await ContactosEmergenciaService.create({
-      nombre_contacto: nombreEmergencia,
-      telefono: telefonoContactoEmergencia,
-      parentesco: parentesco
-    });
-
-    console.log('Contacto principal guardado:', contactoData);
-    createdContactoIds.push(contactoData.id);
-
-    // 2. Guardar contacto opcional si existe
-    let contactoOpcionalData = null;
-    if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
-      try {
-        contactoOpcionalData = await ContactosEmergenciaService.create({
-          nombre_contacto: nombreEmergenciaO,
-          telefono: telefonoContactoEmergenciaO,
-          parentesco: parentescoO
-        });
-        console.log('Contacto opcional guardado:', contactoOpcionalData);
-        createdContactoIds.push(contactoOpcionalData.id);
-      } catch (error) {
-        console.warn('Error al guardar contacto opcional:', error);
+    if(nombreEmergencia != "" && telefonoContactoEmergencia != "" && parentesco != ""){
+      const contactoData = await ContactosEmergenciaService.create({
+        nombre_contacto: nombreEmergencia,
+        telefono: telefonoContactoEmergencia,
+        parentesco: parentesco
+      });
+      if(contactoData.error){
+        throw new Error("Error al guardar contacto principal: " + contactoData.error);
       }
+      console.log('Contacto principal guardado:', contactoData);
+      createdContactoIds.push(contactoData.id);
+
+      // 2. Guardar contacto opcional si existe
+      let contactoOpcionalData = null;
+      if (nombreEmergenciaO && telefonoContactoEmergenciaO && parentescoO) {
+        try {
+          contactoOpcionalData = await ContactosEmergenciaService.create({
+            nombre_contacto: nombreEmergenciaO,
+            telefono: telefonoContactoEmergenciaO,
+            parentesco: parentescoO
+          });
+          if(contactoOpcionalData.error){
+            throw new Error("Error al guardar contacto opcional: " + contactoOpcionalData.error);
+          }
+          console.log('Contacto opcional guardado:', contactoOpcionalData);
+          createdContactoIds.push(contactoOpcionalData.id);
+        } catch (error) {
+          console.warn('Error al guardar contacto opcional:', error);
+        }
+      }
+    }
+    else{
+      throw new Error("Error al guardar contacto principal: " + contactoData.error);
     }
 
     // 3. Guardar el prospecto
@@ -380,13 +391,16 @@ function CollaboratorForm({ datosSat}) {
       pension_alimenticia: pension,
       id_detalles_puesto: null
     });
+    if(prospectoData.error){
+      throw new Error("Error al guardar prospecto: " + prospectoData.error);
+    }
 
     console.log('Prospecto guardado:', prospectoData);
     createdProspectoId = prospectoData.id;
     createdProspectoNombre = `${prospectoData.nombre}_${apellidoPaterno}_${apellidoMaterno}`;
 
     // 4. Insertar firma si existe
-    if (firmaBase64) {
+    if (firmaBase64 != null) {
       try {
         const firmaData = await FirmasService.upload({
           id_prospecto: prospectoData.id,
@@ -395,19 +409,29 @@ function CollaboratorForm({ datosSat}) {
           tipo: 'image/png',
           fecha_creacion: new Date().toISOString().slice(0, 19).replace('T', ' ')
         });
+        if(firmaData.error){
+          throw new Error("Error al guardar firma: " + firmaData.error);
+        }
         console.log('Firma guardada:', firmaData);
       } catch (firmaError) {
         console.warn('Error al guardar firma:', firmaError);
         // No hacemos throw aquí para no interrumpir el flujo principal
       }
     }
+    else{
+      throw new Error("Error al guardar firma: " + firmaData.error);
+    }
 
     // 5. Crear relación con contacto principal (usando el servicio de prospectos)
-    try {
-      const relacionPrincipalData = await ProspectosService.addContacto({
+    if(prospectoData.id != 0 && contactoData.id != 0){
+      try {
+      const relacionPrincipalData = await ProspectoContactoEmergenciaService.create({
         id_prospecto: prospectoData.id,
         id_contacto_emergencia: contactoData.id
       });
+      if(relacionPrincipalData.error){
+        throw new Error("Error al crear relación principal: " + relacionPrincipalData.error);
+      }
       console.log('Relación principal creada:', relacionPrincipalData);
       createdRelationships.push({
         prospectoId: prospectoData.id,
@@ -416,14 +440,22 @@ function CollaboratorForm({ datosSat}) {
     } catch (relacionError) {
       console.warn('Error al crear relación principal:', relacionError);
     }
+    }
+    else{
+      throw new Error("Error al crear relación principal: " + relacionPrincipalData.error);
+    }
+    
 
     // 6. Crear relación con contacto opcional si existe
-    if (contactoOpcionalData) {
+    if (contactoOpionalData.id != 0 && prospectoData.id != 0) {
       try {
-        const relacionOpcionalData = await ProspectosService.addContacto({
+        const relacionOpcionalData = await ProspectoContactoEmergenciaService.create({
           id_prospecto: prospectoData.id,
           id_contacto_emergencia: contactoOpcionalData.id
         });
+        if(relacionOpcionalData.error){
+          throw new Error("Error al crear relación opcional: " + relacionOpcionalData.error);
+        }
         console.log('Relación opcional creada:', relacionOpcionalData);
         createdRelationships.push({
           prospectoId: prospectoData.id,
@@ -432,6 +464,9 @@ function CollaboratorForm({ datosSat}) {
       } catch (relacionError) {
         console.warn('Error al crear relación opcional:', relacionError);
       }
+    }
+    else{
+      throw new Error("Error al crear relación opcional: " + relacionOpcionalData.error)
     }
 
     // Éxito - todos los datos guardados
@@ -453,6 +488,7 @@ function CollaboratorForm({ datosSat}) {
     try {
       await executeRollback(createdProspectoId, createdContactoIds, createdRelationships);
       console.log('Rollback ejecutado exitosamente');
+        setSuccess(false);
     } catch (rollbackError) {
       console.error('Error durante el rollback:', rollbackError);
       setError(prevError => prevError + '. Además, hubo un problema al revertir los cambios. Contacte al administrador.');
@@ -471,6 +507,16 @@ const executeRollback = async (prospectoId, contactoIds, relationships) => {
         await FirmasService.delete(prospectoId);
       } catch (error) {
         console.warn('Error eliminando firma:', error);
+      }
+    }
+    // Eliminar relaciones creadas
+    if(relationships && relationships.length > 0) {
+      for (const rel of relationships) {
+        try {
+          await ProspectoContactoEmergenciaService.delete(rel.id);
+        } catch (error) {
+          console.warn('Error eliminando relación:', error);
+        }
       }
     }
 

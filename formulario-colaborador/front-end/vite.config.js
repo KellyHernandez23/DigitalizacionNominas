@@ -124,10 +124,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:80', // 🔥 Puerto EXPLÍCITO 80
+        target: 'http://localhost/DigitalizacionNominas/formulario-colaborador/back-end',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/back-end/api'),
-        secure: false, // 🔥 Importante para localhost
+        secure: false,
       }
     }
   }

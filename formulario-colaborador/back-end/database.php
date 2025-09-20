@@ -22,9 +22,9 @@ class Database {
             $this->username = 'root';
             $this->password = 'root';
         } elseif ($database_type === 'prospectos') {
-            $this->db_name = 'ti_prospectos';
-            $this->username = 'ti_prospecto_user';
-            $this->password = 'Ti_prospectos';
+            $this->db_name = 'prospectos';
+            $this->username = 'root';
+            $this->password = 'root';
         }
     }
 

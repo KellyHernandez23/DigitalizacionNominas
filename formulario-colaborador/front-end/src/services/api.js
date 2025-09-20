@@ -1,5 +1,6 @@
 // 🔥 Obtener la URL base desde las variables de entorno
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+const API_BASE = '/api';    
+//import.meta.env.VITE_API_BASE || 'http://localhost/DigitalizacionNominas/formulario-colaborador/back-end/api';
 
 // 🔥 Opcional: Mostrar info en consola para debug
 if (import.meta.env.DEV) {
@@ -10,13 +11,13 @@ if (import.meta.env.DEV) {
 
 export const apiRequest = async (endpoint, options = {}) => {
   try {
-    const url = `${API_BASE}/${endpoint}`.replace(/([^:]\/)\/+/g, "$1");
+   const url = `${API_BASE}/${endpoint}`;
     console.log('Solicitando URL:', url); // Para debugs
 
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        // ...options.headers,
       },
       ...options,
     });
@@ -35,11 +36,12 @@ export const apiRequest = async (endpoint, options = {}) => {
 
 // Servicios para PHP
 export const EmpleadosService = {
-  getByRFC: (rfc) => apiRequest('empleados.php', {
+  getByRFC: (rfc) => apiRequest('empleados', {
     method: 'POST',
     body: JSON.stringify({ rfc })
   }),
   
+  // Si también necesitas otros métodos para empleados
   getAll: () => apiRequest('empleados.php?action=getAll', {
     method: 'GET'
   })
@@ -54,12 +56,12 @@ export const ProspectosService = {
   delete: (id) => apiRequest('prospectos.php', {
     method: 'POST',
     body: JSON.stringify({ id_prospecto: id, _method: 'DELETE' })
-  }),
-  
-   addContacto: (data) => apiRequest('prospectos-contactos.php', {
-    method: 'POST',
-    body: JSON.stringify(data)
   })
+  
+  //  addContacto: (data) => apiRequest('prospectos-contactos.php', {
+  //   method: 'POST',
+  //   body: JSON.stringify(data)
+  //})
 };
 
 export const FirmasService = {
@@ -84,5 +86,13 @@ export const ContactosEmergenciaService = {
   })
 };
 
-
-
+export const ProspectoContactoEmergenciaService = {
+  create: (data) => apiRequest('prospecto_contacto_emergencia.php', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  delete: (id) => apiRequest('prospecto_contacto_emergencia.php', {
+    method: 'POST',
+    body: JSON.stringify({id_prospecto: id, _method: 'DELETE' })
+  })
+};

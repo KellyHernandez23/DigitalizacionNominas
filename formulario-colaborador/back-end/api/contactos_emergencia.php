@@ -1,15 +1,13 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
+header('Content-Type: application/json');
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-include 'database.php';
+require_once __DIR__ . '/../database.php';
 
 $database = new Database('prospectos');
 $db = $database->getConnection();
@@ -20,9 +18,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
         if (isset($data['id_contacto_emergencia'])) {
             handleDeleteContacto($db, $data);
-        } else if (isset($data['id_prospecto']) && isset($data['id_contacto_emergencia'])) {
-            handleAddProspectoContacto($db, $data);
-        } else {
+        } 
+        else {
             handleAddContacto($db, $data);
         }
         break;
@@ -61,29 +58,29 @@ function handleAddContacto($db, $data) {
     }
 }
 
-function handleAddProspectoContacto($db, $data) {
-    $query = "INSERT INTO prospecto_contacto_emergencia (id_prospecto, id_contacto_emergencia) VALUES (?, ?)";
-    $values = [
-        $data['id_prospecto'] ?? null,
-        $data['id_contacto_emergencia'] ?? null
-    ];
+// function handleAddProspectoContacto($db, $data) {
+//     $query = "INSERT INTO prospecto_contacto_emergencia (id_prospecto, id_contacto_emergencia) VALUES (?, ?)";
+//     $values = [
+//         $data['id_prospecto'] ?? null,
+//         $data['id_contacto_emergencia'] ?? null
+//     ];
 
-    try {
-        $stmt = $db->prepare($query);
-        $stmt->execute($values);
+//     try {
+//         $stmt = $db->prepare($query);
+//         $stmt->execute($values);
         
-        echo json_encode([
-            'success' => true,
-            'message' => 'Relación prospecto-contacto agregada exitosamente'
-        ]);
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'error' => 'Error interno del servidor: ' . $e->getMessage()
-        ]);
-    }
-}
+//         echo json_encode([
+//             'success' => true,
+//             'message' => 'Relación prospecto-contacto agregada exitosamente'
+//         ]);
+//     } catch (PDOException $e) {
+//         http_response_code(500);
+//         echo json_encode([
+//             'success' => false,
+//             'error' => 'Error interno del servidor: ' . $e->getMessage()
+//         ]);
+//     }
+// }
 
 function handleDeleteContacto($db, $data) {
     $query = "DELETE FROM contacto_emergencia WHERE id_contacto_emergencia = ?";
